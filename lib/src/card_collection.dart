@@ -2,19 +2,17 @@ import './card.dart';
 
 /// A group of cards in the joker card game.
 class CardCollection extends Iterable<Card> {
-  String _label;
-  List<Card> _cards;
+  final String _label;
+  final List<Card> _cards = [];
 
   /// If this [CardCollection] is empty (has no [Card] in it) or not.
-  bool get empty => _cards.length == 0;
+  bool get isEmpty => _cards.length == 0;
 
   /// The number of [Card]s in this [CardCollection].
   int get size => _cards.length;
 
   /// Creates an empty `CardCollection` with name as [label].
-  CardCollection({required String label})
-      : this._label = label,
-        _cards = [];
+  CardCollection({required String label}): this._label = label;
 
   @override
   String toString() {

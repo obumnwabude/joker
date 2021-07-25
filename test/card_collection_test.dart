@@ -9,7 +9,7 @@ void main() {
     cc.add(c1);
     cc.add(d1);
     test('are not empty when a card is added', () {
-      expect(cc.empty, false);
+      expect(cc.isEmpty, false);
       expect(cc.size, 2);
     });
     test('can display their contents', () {
