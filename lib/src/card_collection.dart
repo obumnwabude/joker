@@ -39,4 +39,23 @@ class CardCollection extends Iterable<Card> {
 
   /// Sorts the [Card]s in this [CardCollection].
   void sort() => _cards.sort();
+
+  /// Shuffles the [Cards]s this [CardCollection].
+  void shuffle() => _cards.shuffle();
+}
+
+/// A standard pack of 52 playing cards (or 54 if two joker cards are included).
+class Deck extends CardCollection {
+  Deck({required bool includeJokers})
+      : super(label: 'Deck (with${includeJokers ? '' : 'out'} Jokers)') {
+    for (int suit = 1; suit < 5; suit++) {
+      for (int rank = 1; rank < 14; rank++) {
+        _cards.add(Card(rank: rank, suit: suit));
+      }
+    }
+    if (includeJokers) {
+      _cards.add(Card(rank: 14, suit: 5));
+      _cards.add(Card(rank: 14, suit: 6));
+    }
+  }
 }
