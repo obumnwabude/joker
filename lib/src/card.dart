@@ -62,24 +62,6 @@ class Card {
   /// Creates and returns a [Card] whose [rank] and [suit] are those of [other].
   factory Card.clone(Card other) => Card(rank: other.rank, suit: other.suit);
 
-  /// Checks if the [suit] of this [Card] matches the [suit] of [other].
-  ///
-  /// In addition to exact [suit] matching, the `Black` [suit] matches `Clubs`
-  /// and `Spades` while the `Red` [suit] matches the `Diamonds` and the
-  /// `Hearts` suit.
-  bool matchSuit(Card other) {
-    if (suit == other.suit) return true;
-    if (suit == 5 || other.suit == 5) {
-      if (other.suit == 1 || suit == 1) return true;
-      if (other.suit == 4 || suit == 4) return true;
-    }
-    if (suit == 6 || other.suit == 6) {
-      if (other.suit == 2 || suit == 2) return true;
-      if (other.suit == 3 || suit == 3) return true;
-    }
-    return false;
-  }
-
   @override
   String toString() {
     if (rank == 14)
@@ -98,4 +80,22 @@ class Card {
 
   @override
   int get hashCode => rank * suit;
+
+  /// Checks if the [suit] of this [Card] matches the [suit] of [other].
+  ///
+  /// In addition to exact [suit] matching, the `Black` [suit] matches `Clubs`
+  /// and `Spades` while the `Red` [suit] matches the `Diamonds` and the
+  /// `Hearts` suit.
+  bool matchSuit(Card other) {
+    if (suit == other.suit) return true;
+    if (suit == 5 || other.suit == 5) {
+      if (other.suit == 1 || suit == 1) return true;
+      if (other.suit == 4 || suit == 4) return true;
+    }
+    if (suit == 6 || other.suit == 6) {
+      if (other.suit == 2 || suit == 2) return true;
+      if (other.suit == 3 || suit == 3) return true;
+    }
+    return false;
+  }
 }
