@@ -26,6 +26,17 @@ void main() {
       cc.sort();
       expect(cc[0], d1);
     });
+    test('can deal cards to other CardCollections', () {
+      int size = cc.size;
+      final cc2 = CardCollection(label: 'test2');
+      try {
+        cc.deal(cc2, 4);
+      } on InsufficientCardsException {
+        cc.deal(cc2, 1);
+        cc.dealAll(cc2);
+      }
+      expect(cc2.size, size);
+    });
   });
 
   group('Decks', () {

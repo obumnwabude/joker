@@ -42,6 +42,30 @@ class CardCollection extends Iterable<Card> {
 
   /// Shuffles the [Cards]s this [CardCollection].
   void shuffle() => _cards.shuffle();
+
+  /// Deals out the [n] number of [Card]s from this [CardCollection] to [other].
+  ///
+  /// Throws an [InsufficientCardsException] if the [size] of this
+  /// [CardCollection] is less than the required [n] cards to be dealt. Also
+  /// throws an [ArgumentError] if a negative number is provided as [n].
+  void deal(CardCollection other, int n) {
+    if (_cards.length < n) {
+      throw InsufficientCardsException();
+    } else if (n < 0) {
+      throw ArgumentError.value(n);
+    } else {
+      for (int i = n; i > 0; i--) {
+        other.add(_cards.removeAt(_cards.length - 1));
+      }
+    }
+  }
+
+  /// Deals out all the [Card]s in this [CardCollection] into [other].
+  void dealAll(CardCollection other) {
+    for (int i = _cards.length; i > 0; i--) {
+      other.add(_cards.removeAt(i - 1));
+    }
+  }
 }
 
 /// A standard pack of 52 playing cards (or 54 if two joker cards are included).
@@ -58,4 +82,11 @@ class Deck extends CardCollection {
       _cards.add(Card(rank: 14, suit: 6));
     }
   }
+}
+
+/// Thrown when there are not enough [Card]s to be [CardCollection.deal]t from
+/// a [CardCollection]
+class InsufficientCardsException implements Exception {
+  String cause = 'Not enough cards to deal out';
+  InsufficientCardsException();
 }
