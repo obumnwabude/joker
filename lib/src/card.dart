@@ -73,7 +73,7 @@ class Card implements Comparable<Card> {
   @override
   bool operator ==(Object other) {
     if (other is Card)
-      return rank == other.rank && matchSuit(other);
+      return rank == other.rank && suit == other.suit;
     else
       return false;
   }
