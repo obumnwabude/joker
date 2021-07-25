@@ -1,5 +1,5 @@
 /// A card object representing a real life playing card like Ace of Clubs.
-class Card {
+class Card implements Comparable<Card> {
   /// Holds the rank of this [Card].
   ///
   /// Runs from `1` to `14`. `1` for `Ace`, `2` to `10` for their respective
@@ -80,6 +80,21 @@ class Card {
 
   @override
   int get hashCode => rank * suit;
+
+  @override
+  int compareTo(Card other) {
+    if (suit > other.suit) {
+      return 1;
+    } else if (suit < other.suit) {
+      return -1;
+    } else if (rank > other.rank) {
+      return 1;
+    } else if (rank < other.rank) {
+      return -1;
+    } else {
+      return 0;
+    }
+  }
 
   /// Checks if the [suit] of this [Card] matches the [suit] of [other].
   ///
