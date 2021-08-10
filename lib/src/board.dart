@@ -1,37 +1,45 @@
 import './card.dart';
 import './card_collection.dart';
+import './game_settings.dart';
 import './player.dart';
 
-/// The board on which the joker card game is played
+/// The board on which the joker card game is played.
 ///
-/// The board is the single source of truth for the joker card game. It holds
-/// and controls [Player]s and [Card]s.
+/// The [discardPile] is the pile of [Card]s onto which [Player]s play [Card]s
+/// to empty their [Player.hand]s and win the game. 
+///
+/// The [drawPile] is the pile of [Card]s from which [Player]s draw [Card]s 
+/// when taking turns, if they don't have a matching [Card] in their
+/// [Player.hand]s.
 class Board {
   /// The pile of [Card]s placed face down from which [Player]s can draw [Card]s
-  CardCollection drawPile = CardCollection(label: 'Draw Pile');
+  final CardCollection drawPile = CardCollection(label: 'Draw Pile');
 
   /// The pile of [Card]s placed face up unto which [Player]s discard [Card]s.
-  CardCollection discardPile = CardCollection(label: 'Discard Pile');
+  final CardCollection discardPile = CardCollection(label: 'Discard Pile');
 
-  /// The [Player]s that take turns to draw or discard [Card]s to or from this
-  /// [Board].
-  final List<Player> players;
-
-  /// Creates a Board with given [players].
-  Board({required this.players}) {
-    Deck deck = Deck(includeJokers: true)..shuffle();
+  /// Starts the game by dealing [Card]s to all [players]' [Player.hand]s.
+  ///
+  /// Initializes and shuffles [Deck](s) of [Card]s used for playing on this 
+  /// [Board]. One or two [Deck]s could be used depending on the 
+  /// [GameSettings.useTwoDecks] property of the [gameSettings].
+  ///
+  /// The number of [Card]s dealt to each `player's` [Player.hand] is specified 
+  /// by the [GameSettings.initialHandSize] property of [gameSettings]. After 
+  /// dealing, one [Card] is dealt to the [discardPile], while the other [Card]s
+  /// are dealt to the [drawPile].
+  Board({required GameSettings gameSettings, required List<Player> players}) {
+    Deck deck = Deck(includeJokers: gameSettings.includeJokers);
+    if (gameSettings.useTwoDecks) {
+      Deck(includeJokers: gameSettings.includeJokers).dealAll(deck);
+    }
+    deck.shuffle();
     players.forEach((player) {
-      deck.deal(player.hand, 5);
+      deck.deal(player.hand, gameSettings.initialHandSize);
       player.hand.sort();
-      print(player.hand);
-      print('');
     });
+    deck.deal(discardPile, 1);
     deck.dealAll(drawPile);
   }
 }
-
-void main() {
-  var obum = Player(name: 'Obum');
-  var olisa = Player(name: 'Olisa');
-  Board(players: [obum, olisa]);
-}
+ 

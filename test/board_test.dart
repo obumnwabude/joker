@@ -1,0 +1,14 @@
+import 'package:test/test.dart';
+import 'package:joker/joker.dart';
+
+void main() {
+  final List<Player> players = [Player(name: 'Test1')];
+  final GameSettings gS = GameSettings(initialHandSize: 10);
+  final Board board = Board(gameSettings: gS, players: players);
+  
+  test('The Board to start the game when initialized', () {
+    expect(board.discardPile.size, 1);
+    expect(board.drawPile.size, greaterThan(1));
+    expect(players[0].hand.size, 10);
+  });
+}
