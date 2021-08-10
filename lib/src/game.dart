@@ -4,15 +4,22 @@ import './player.dart';
 
 /// Contains the entry point for the joker card game.
 class Game {
-  /// The [Player]s that play this `Game`.
-  final List<Player> players = [Player(name: 'Obum'), Player(name: 'Olisa')];
-
   Game() {
-    Board(gameSettings: GameSettings(initialHandSize: 5), players: players);
-    players.forEach((player) {
-      print(player.hand);
-      print('');
-    });
+    var players = [Player(name: 'Obum'), Player(name: 'Olisa')];
+    var board =
+        Board(gameSettings: GameSettings(initialHandSize: 1), players: players);
+    var playerIndex = 0;
+
+    while (!(players.any((player) => player.hand.isEmpty))) {
+      players[playerIndex].play(board);
+      if (playerIndex == 0)
+        playerIndex = 1;
+      else
+        playerIndex = 0;
+    }
+
+    print('');
+    print('${players[playerIndex].name} won the game');
   }
 }
 

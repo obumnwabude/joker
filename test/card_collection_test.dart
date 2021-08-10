@@ -21,6 +21,16 @@ void main() {
       while (ccIt.moveNext()) size++;
       expect(size, cc.size);
     });
+    test('can have cards removed from them', () {
+      final copiedLastCard = Card.clone(cc[cc.size - 1]);
+      final lastCard1 = cc.removeLast();
+      final copiedRemovedCard = Card.clone(cc[cc.size - 1]);
+      final lastCard2 = cc.removeAt(cc.size - 1);
+      expect(copiedLastCard, lastCard1);
+      expect(copiedRemovedCard, lastCard2);
+      cc.add(lastCard1);
+      cc.add(lastCard2);
+    });
     test('can be shuffled and can be sorted', () {
       cc.shuffle();
       cc.sort();

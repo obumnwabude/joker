@@ -12,7 +12,7 @@ class CardCollection extends Iterable<Card> {
   int get size => _cards.length;
 
   /// Creates an empty `CardCollection` with name as [label].
-  CardCollection({required String label}): this._label = label;
+  CardCollection({required String label}) : this._label = label;
 
   @override
   String toString() {
@@ -34,6 +34,13 @@ class CardCollection extends Iterable<Card> {
 
   /// Adds the provided [card] to this [CardCollection].
   void add(Card card) => _cards.add(card);
+
+  /// Removes and returns the [Card] at position [index] from this
+  /// [CardCollection].
+  Card removeAt(int index) => _cards.removeAt(index);
+
+  /// Removes and returns the last [Card] in this [CardCollection].
+  Card removeLast() => _cards.removeLast();
 
   /// Sorts the [Card]s in this [CardCollection].
   void sort() => _cards.sort();
@@ -83,7 +90,7 @@ class Deck extends CardCollection {
 }
 
 /// Thrown when there are not enough [Card]s to be [CardCollection.deal]t from
-/// a [CardCollection]
+/// a [CardCollection].
 class InsufficientCardsException implements Exception {
   String cause = 'Not enough cards to deal out';
   InsufficientCardsException();

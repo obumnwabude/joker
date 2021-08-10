@@ -8,6 +8,7 @@ void main() {
   
   test('The Board to start the game when initialized', () {
     expect(board.discardPile.size, 1);
+    expect(board.previous, board.discardPile[0]);
     expect(board.drawPile.size, greaterThan(1));
     expect(players[0].hand.size, 10);
   });
