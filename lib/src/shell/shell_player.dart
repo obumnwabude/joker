@@ -1,16 +1,13 @@
 import 'dart:io';
-import './board.dart';
-import './card.dart';
-import './card_collection.dart';
+
+import '../core/board.dart';
+import '../core/card.dart';
+import '../core/player.dart';
 
 /// A player of the joker card game.
-class Player {
-  final String name;
-  final CardCollection hand;
-
-  /// Creates and returns a [Player] with the given [name].
-  Player({required this.name})
-      : this.hand = CardCollection(label: '${name}\'s Hand');
+class ShellPlayer extends Player {
+  /// Creates and returns a [ShellPlayer] with the given [name].
+  ShellPlayer({required name}) : super(name: name);
 
   int _inputHandler() {
     var line = stdin.readLineSync()?.trim();
@@ -23,10 +20,7 @@ class Player {
     return chosen;
   }
 
-  /// Adds the [drawn] card to [hand].
-  void draw(Card drawn) => hand.add(drawn);
-
-  /// When this `Player` takes a turn on the [board].
+  @override
   void play(Board board) {
     print('');
     print('Board: ${board.previous}');

@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:joker/joker.dart';
+import 'package:joker/core.dart';
 
 void main() {
   group('CardCollections', () {
