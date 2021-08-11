@@ -1,8 +1,9 @@
 import 'package:test/test.dart';
-import 'package:joker/joker.dart';
+import 'package:joker/core.dart';
+import 'package:joker/shell.dart';
 
 void main() {
-  final List<Player> players = [Player(name: 'Test1')];
+  final List<Player> players = [ShellPlayer(name: 'Test1')];
   final GameSettings gS = GameSettings(initialHandSize: 10);
   final Board board = Board(gameSettings: gS, players: players);
   

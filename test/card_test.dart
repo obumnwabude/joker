@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:joker/joker.dart';
+import 'package:joker/core.dart';
 
 void main() {
   final s1 = Card(rank: 1, suit: 4);

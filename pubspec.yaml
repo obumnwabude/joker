@@ -1,10 +1,13 @@
 name: joker
 description: A shedding-type card game for two or more players.
-version: 0.0.0
+version: 1.0.0
 repository: https://github.com/obumnwabude/joker
 
 environment:
   sdk: '>=2.13.0 <3.0.0'
+
+executables:
+  joker: main
 
 dev_dependencies: 
   test: ^1.17.10
