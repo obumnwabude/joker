@@ -32,6 +32,14 @@ class CardCollection extends Iterable<Card> {
   /// that index must be non-negative and less than [size].
   Card operator [](int index) => _cards[index];
 
+  /// The first index of [card] in this CardCollection.
+  ///
+  /// Searches this CardCollection for the first time the provided [card] is
+  /// encountered and returns the index of [card].
+  ///
+  /// Returns -1 if [card] is not found.
+  int indexOf(Card card) => _cards.indexOf(card);
+
   /// Adds the provided [card] to this CardCollection.
   void add(Card card) => _cards.add(card);
 
