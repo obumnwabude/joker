@@ -5,10 +5,10 @@ class CardCollection extends Iterable<Card> {
   final String _label;
   final List<Card> _cards = [];
 
-  /// If this [CardCollection] is empty (has no [Card] in it) or not.
+  /// If this CardCollection is empty (has no [Card] in it) or not.
   bool get isEmpty => _cards.length == 0;
 
-  /// The number of [Card]s in this [CardCollection].
+  /// The number of [Card]s in this CardCollection.
   int get size => _cards.length;
 
   /// Creates an empty `CardCollection` with name as [label].
@@ -26,32 +26,32 @@ class CardCollection extends Iterable<Card> {
   @override
   Iterator<Card> get iterator => _cards.iterator;
 
-  /// The [Card] at the given [index] in this [CardCollection].
+  /// The [Card] at the given [index] in this CardCollection.
   ///
-  /// The index must be a valid index of this [CardCollection], which means
+  /// The index must be a valid index of this CardCollection, which means
   /// that index must be non-negative and less than [size].
   Card operator [](int index) => _cards[index];
 
-  /// Adds the provided [card] to this [CardCollection].
+  /// Adds the provided [card] to this CardCollection.
   void add(Card card) => _cards.add(card);
 
   /// Removes and returns the [Card] at position [index] from this
-  /// [CardCollection].
+  /// CardCollection.
   Card removeAt(int index) => _cards.removeAt(index);
 
-  /// Removes and returns the last [Card] in this [CardCollection].
+  /// Removes and returns the last [Card] in this CardCollection.
   Card removeLast() => _cards.removeLast();
 
-  /// Sorts the [Card]s in this [CardCollection].
+  /// Sorts the [Card]s in this CardCollection.
   void sort() => _cards.sort();
 
-  /// Shuffles the [Cards]s this [CardCollection].
+  /// Shuffles the [Cards]s this CardCollection.
   void shuffle() => _cards.shuffle();
 
-  /// Deals out the [n] number of [Card]s from this [CardCollection] to [other].
+  /// Deals out the [n] number of [Card]s from this CardCollection to [other].
   ///
   /// Throws an [InsufficientCardsException] if the [size] of this
-  /// [CardCollection] is less than the required [n] cards to be dealt. Also
+  /// CardCollection is less than the required [n] cards to be dealt. Also
   /// throws an [ArgumentError] if a negative number is provided as [n].
   void deal(CardCollection other, int n) {
     if (_cards.length < n) {
@@ -65,7 +65,7 @@ class CardCollection extends Iterable<Card> {
     }
   }
 
-  /// Deals out all the [Card]s in this [CardCollection] into [other].
+  /// Deals out all the [Card]s in this CardCollection into [other].
   void dealAll(CardCollection other) {
     for (int i = _cards.length; i > 0; i--) {
       other.add(_cards.removeAt(i - 1));
@@ -90,7 +90,7 @@ class Deck extends CardCollection {
 }
 
 /// Thrown when there are not enough [Card]s to be [CardCollection.deal]t from
-/// a [CardCollection].
+/// a CardCollection.
 class InsufficientCardsException implements Exception {
   String cause = 'Not enough cards to deal out';
   InsufficientCardsException();
