@@ -1,12 +1,13 @@
 import '../core/board.dart';
 import '../core/game.dart';
 import '../core/game_settings.dart';
+import '../core/system_player.dart';
 import './shell_player.dart';
 
 /// Contains the entry point for the joker card game.
 class ShellGame extends Game {
   ShellGame() {
-    var players = [ShellPlayer(name: 'Obum'), ShellPlayer(name: 'Olisa')];
+    var players = [ShellPlayer(name: 'Obum'), SystemPlayer(name: 'System')];
     var board =
         Board(gameSettings: GameSettings(initialHandSize: 5), players: players);
     var playerIndex = 0;
@@ -21,9 +22,6 @@ class ShellGame extends Game {
 
     print('');
     print(
-      '${
-        players.firstWhere((player) => player.hand.isEmpty).name
-      } won the game'
-    );
+        '${players.firstWhere((player) => player.hand.isEmpty).name} won the game');
   }
 }

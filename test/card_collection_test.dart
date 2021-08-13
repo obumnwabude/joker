@@ -21,6 +21,9 @@ void main() {
       while (ccIt.moveNext()) size++;
       expect(size, cc.size);
     });
+    test('can detect the index of provided card arguments', () {
+      expect(cc.indexOf(c1), 0);
+    });
     test('can have cards removed from them', () {
       final copiedLastCard = Card.clone(cc[cc.size - 1]);
       final lastCard1 = cc.removeLast();

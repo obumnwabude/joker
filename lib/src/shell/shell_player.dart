@@ -4,7 +4,7 @@ import '../core/board.dart';
 import '../core/card.dart';
 import '../core/player.dart';
 
-/// A player of the joker card game.
+/// An external player of the joker card game in the terminal.
 class ShellPlayer extends Player {
   /// Creates and returns a [ShellPlayer] with the given [name].
   ShellPlayer({required name}) : super(name: name);
