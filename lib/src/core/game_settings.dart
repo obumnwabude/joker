@@ -6,9 +6,8 @@ class GameSettings {
   final bool includeJokers;
   final bool useTwoDecks;
 
-  GameSettings({
-    required this.initialHandSize,
-    this.includeJokers = true,
-    this.useTwoDecks = false
-  });
+  GameSettings(
+      {required this.initialHandSize,
+      this.includeJokers = true,
+      this.useTwoDecks = false});
 }

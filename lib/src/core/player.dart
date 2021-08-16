@@ -11,8 +11,8 @@ abstract class Player {
   Player({required this.name})
       : this.hand = CardCollection(label: '${name}\'s Hand');
 
-  /// Adds the [drawn] card to [hand].
-  void draw(Card drawn) => hand.add(drawn);
+  /// Draws a [Card] from [board].
+  void draw(Board board) => board.draw(this);
 
   /// When this `Player` takes a turn on the [board].
   void play(Board board);
