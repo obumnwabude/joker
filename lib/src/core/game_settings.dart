@@ -5,9 +5,11 @@ class GameSettings {
   final int initialHandSize;
   final bool includeJokers;
   final bool useTwoDecks;
+  final bool enableUndoRedo;
 
   GameSettings(
       {required this.initialHandSize,
       this.includeJokers = true,
-      this.useTwoDecks = false});
+      this.useTwoDecks = false,
+      this.enableUndoRedo = false});
 }

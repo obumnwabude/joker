@@ -25,6 +25,9 @@ class Board {
   /// The [Turn]s taken on this board
   TurnStack _turns = new TurnStack();
 
+  /// The [GameSettings] used during play on this board.
+  GameSettings gameSettings;
+
   /// Starts the game by dealing [Card]s to all [players]' [Player.hand]s.
   ///
   /// Initializes and shuffles [Deck](s) of [Card]s used for playing on this
@@ -35,7 +38,7 @@ class Board {
   /// by the [GameSettings.initialHandSize] property of [gameSettings]. After
   /// dealing, one [Card] is dealt to the [discardPile], while the other [Card]s
   /// are dealt to the [drawPile].
-  Board({required GameSettings gameSettings, required List<Player> players}) {
+  Board({required this.gameSettings, required List<Player> players}) {
     Deck deck = Deck(includeJokers: gameSettings.includeJokers);
     if (gameSettings.useTwoDecks) {
       Deck(includeJokers: gameSettings.includeJokers).dealAll(deck);
@@ -51,16 +54,20 @@ class Board {
   }
 
   /// Can redo the previous [Turn]
-  bool get canRedo => _turns.canRedo;
+  bool get canRedo => gameSettings.enableUndoRedo ? _turns.canRedo : false;
 
   /// Can undo the previous [Turn]
-  bool get canUndo => _turns.canUndo;
+  bool get canUndo => gameSettings.enableUndoRedo ? _turns.canUndo : false;
 
   /// Undoes the previous [Turn] on the board.
-  void undo() => _turns.canUndo ? _turns.undo() : false;
+  void undo() {
+    if (canUndo) _turns.undo();
+  }
 
   /// Reddoes the previously undone [Turn] on the board.
-  void redo() => _turns.canRedo ? _turns.redo() : false;
+  void redo() {
+    if (canRedo) _turns.redo();
+  }
 
   /// Removes and adds the topmost [Card] in the [drawPile] to [player]'s hand.
   void draw(Player player) {
