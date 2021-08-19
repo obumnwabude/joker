@@ -9,7 +9,7 @@ class ShellGame extends Game {
   ShellGame() {
     var players = [ShellPlayer(name: 'Obum'), SystemPlayer(name: 'System')];
     var board =
-        Board(gameSettings: GameSettings(initialHandSize: 5), players: players);
+        Board(gameSettings: GameSettings.defaults(), players: players);
     var playerIndex = 0;
 
     while (!(players.any((player) => player.hand.isEmpty))) {

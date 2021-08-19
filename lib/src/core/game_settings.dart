@@ -9,7 +9,13 @@ class GameSettings {
 
   GameSettings(
       {required this.initialHandSize,
-      this.includeJokers = true,
-      this.useTwoDecks = false,
-      this.enableUndoRedo = false});
+      required this.includeJokers,
+      required this.useTwoDecks,
+      required this.enableUndoRedo});
+
+  factory GameSettings.defaults() => GameSettings(
+      initialHandSize: 5,
+      includeJokers: true,
+      useTwoDecks: false,
+      enableUndoRedo: false);
 }
