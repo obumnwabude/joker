@@ -1,6 +1,7 @@
 import 'dart:io';
 import '../core/board.dart';
 import '../core/card.dart';
+import '../core/card_collection.dart';
 import '../core/player.dart';
 
 /// An external player of the joker card game in the terminal.
@@ -36,7 +37,17 @@ class ShellPlayer extends Player {
     int option = getUserChoice(limit: hand.size);
 
     if (option == 0) {
+      // The following was not the best solution to show the ShellPlayer the
+      // card they board just gave them, but it was the easiest solution.
+      CardCollection oldHand = CardCollection(label: 'My Old Hand');
+      hand.forEach((card) => oldHand.add(Card.clone(card)));
+
+      // draw from board
       draw(board);
+
+      // determine the newly added card and display
+      Card newCard = hand.firstWhere((card) => oldHand.contains(card));
+      print('Board gave you $newCard');
     } else {
       Card played = hand.removeAt(option - 1);
       try {
