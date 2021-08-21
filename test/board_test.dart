@@ -1,13 +1,18 @@
 import 'package:test/test.dart';
 import 'package:joker/core.dart';
 
+class TestPlayer extends Player {
+  TestPlayer() : super(name: 'Test');
+  void play(_) {}
+}
+
 void main() {
-  final List<Player> players = [SystemPlayer(name: 'Test1')];
+  final player = TestPlayer();
   final Board board = Board(
       // the double copyWith is for test coverage
       gameSettings:
           GameSettings.defaults().copyWith().copyWith(enableUndoRedo: true),
-      players: players);
+      players: [player]);
 
   group('The Board', () {
     test('can be initialized with two decks', () {
@@ -24,14 +29,14 @@ void main() {
     });
     test('can draw a card to a player', () {
       int oldDrawPileSize = board.drawPile.size;
-      int oldPlayerHandSize = players[0].hand.size;
+      int oldPlayerHandSize = player.hand.size;
 
       // for code coverage
       board.drawPile.dealAll(board.discardPile);
 
-      board.draw(players[0]);
+      board.draw(player);
       expect(board.drawPile.size, oldDrawPileSize - 1);
-      expect(players[0].hand.size, oldPlayerHandSize + 1);
+      expect(player.hand.size, oldPlayerHandSize + 1);
     });
     test('should throw exception if unmatched card is played', () {
       Card unmatchedCard;
@@ -41,7 +46,7 @@ void main() {
         unmatchedCard = Card(rank: 14, suit: 5);
 
       try {
-        board.play(players[0], unmatchedCard);
+        board.play(player, unmatchedCard);
       } catch (e) {
         expect((e as UnmatchedCardException).cause,
             contains(unmatchedCard.toString()));
@@ -51,10 +56,13 @@ void main() {
       int oldDiscardPileSize = board.discardPile.size;
       // hard to use a cloned card as one can't tell if the Test SystemPlayer
       // will have a matching card when this test runs.
-      board.play(players[0], Card.clone(board.previous));
+      board.play(player, Card.clone(board.previous));
       expect(board.discardPile.size, oldDiscardPileSize + 1);
     });
     test('can undo and redo', () {
+      // repeat undo twice for code coverage
+      expect(board.canUndo, true);
+      board.undo();
       expect(board.canUndo, true);
       board.undo();
       expect(board.canRedo, true);
