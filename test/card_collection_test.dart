@@ -5,9 +5,9 @@ void main() {
   group('CardCollections', () {
     final cc = CardCollection(label: 'test');
     final c1 = Card(rank: 1, suit: 4);
-    final d1 = Card(rank: 1, suit: 2);
+    final d2 = Card(rank: 2, suit: 2);
     cc.add(c1);
-    cc.add(d1);
+    cc.add(d2);
     test('are not empty when a card is added', () {
       expect(cc.isEmpty, false);
       expect(cc.size, 2);
@@ -37,14 +37,17 @@ void main() {
     test('can be shuffled and can be sorted', () {
       cc.shuffle();
       cc.sort();
-      expect(cc[0], d1);
+      expect(cc[0], d2);
     });
     test('can deal cards to other CardCollections', () {
       int size = cc.size;
       final cc2 = CardCollection(label: 'test2');
       try {
         cc.deal(cc2, 4);
-      } on InsufficientCardsException {
+      } on InsufficientCardsException {}
+      try {
+        cc.deal(cc2, -1);
+      } on ArgumentError {
         cc.deal(cc2, 1);
         cc.dealAll(cc2);
       }
