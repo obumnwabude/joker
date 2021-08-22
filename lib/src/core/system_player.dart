@@ -17,10 +17,10 @@ class SystemPlayer extends Player {
           ..sort();
 
     if (matchingCards.isEmpty) {
-      draw(board.draw());
+      draw(board);
       print('$name drew a card from board.');
     } else {
-      board.play(hand.removeAt(hand.indexOf(matchingCards.last)));
+      board.play(this, hand.removeAt(hand.indexOf(matchingCards.last)));
       print('$name played "${board.previous}"');
     }
   }

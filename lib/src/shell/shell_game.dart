@@ -9,15 +9,33 @@ class ShellGame extends Game {
   ShellGame() {
     var players = [ShellPlayer(name: 'Obum'), SystemPlayer(name: 'System')];
     var board =
-        Board(gameSettings: GameSettings(initialHandSize: 5), players: players);
+        Board(gameSettings: GameSettings.defaults(), players: players);
     var playerIndex = 0;
 
     while (!(players.any((player) => player.hand.isEmpty))) {
+      if (players[playerIndex] is ShellPlayer) {
+        while (board.canUndo || board.canRedo) {
+          print('');
+          Map<int, String> commands = {0: 'Play'};
+          if (board.canUndo) commands[commands.length] = 'Undo';
+          if (board.canRedo) commands[commands.length] = 'Redo';
+          print('Enter number of what you want to do');
+          commands.forEach((key, value) => print('  $key. $value'));
+          int option = ShellPlayer.getUserChoice(limit: commands.length - 1);
+
+          if (option == 0) {
+            break;
+          } else {
+            if (commands[option] == 'Undo') board.undo();
+            if (commands[option] == 'Redo') board.redo();
+            print('Board: ${board.previous}');
+            playerIndex = playerIndex == 0 ? 1 : 0;
+          }
+        }
+      }
+
       players[playerIndex].play(board);
-      if (playerIndex == 0)
-        playerIndex = 1;
-      else
-        playerIndex = 0;
+      playerIndex = playerIndex == 0 ? 1 : 0;
     }
 
     print('');
