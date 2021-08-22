@@ -19,4 +19,7 @@ Use without arguments to start playing against Computer.
 
 OPTIONS:
   help, --help, or -h
-  Displays this help information.''';
+  Displays this help information.
+  
+  version, --version, or -v
+  Displays the current version of joker.''';
