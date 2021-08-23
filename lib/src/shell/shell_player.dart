@@ -5,7 +5,10 @@ import '../core/card_collection.dart';
 import '../core/player.dart';
 
 /// An external player of the joker card game in the terminal.
-class ShellPlayer extends Player {
+class ShellPlayer implements Player {
+  final String name;
+  final CardCollection hand;
+
   /// Gets the user choice of from `0` to [limit].
   static int getUserChoice({required int limit}) {
     var line = stdin.readLineSync()?.trim();
@@ -25,7 +28,12 @@ class ShellPlayer extends Player {
   }
 
   /// Creates and returns a [ShellPlayer] with the given [name].
-  ShellPlayer({required name}) : super(name: name);
+  ShellPlayer()
+      : name = 'You',
+        hand = CardCollection(label: 'your hand');
+
+  @override
+  void draw(Board board) => board.draw(this);
 
   @override
   void play(Board board) {

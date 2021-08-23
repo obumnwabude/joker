@@ -7,7 +7,7 @@ import './shell_player.dart';
 /// Contains the entry point for the joker card game.
 class ShellGame extends Game {
   ShellGame() {
-    var players = [ShellPlayer(name: 'Obum'), SystemPlayer(name: 'System')];
+    var players = [ShellPlayer(), SystemPlayer(name: 'Computer')];
     var board =
         Board(gameSettings: GameSettings.defaults(), players: players);
     var playerIndex = 0;
