@@ -36,9 +36,17 @@ class ShellGame extends Game {
 
       board.enter(players[playerIndex]);
       if (board.turns.last.action == Action.skipped) {
-        print('');
-        if (players[playerIndex] is ShellPlayer) print('You have been skipped');
-        else print('${players[playerIndex].name} has been skipped');
+        if (players[playerIndex] is ShellPlayer) {
+          print('You have been skipped');
+        } else {
+          print('${players[playerIndex].name} has been skipped');
+        }
+      } else if (players[playerIndex] is SystemPlayer) {
+        if (board.turns.last.action == Action.drew) {
+          print('${players[playerIndex].name} drew a card from board');
+        } else if (board.turns.last.action == Action.played) {
+          print('${players[playerIndex].name} played "${board.previous}"');
+        }
       }
       playerIndex = playerIndex == 0 ? 1 : 0;
     }
