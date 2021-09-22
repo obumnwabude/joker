@@ -2,6 +2,7 @@ import '../core/board.dart';
 import '../core/game.dart';
 import '../core/game_settings.dart';
 import '../core/system_player.dart';
+import '../core/turn_stack.dart';
 import './shell_player.dart';
 
 /// Contains the entry point for the joker card game.
@@ -33,7 +34,12 @@ class ShellGame extends Game {
         }
       }
 
-      players[playerIndex].play(board);
+      board.enter(players[playerIndex]);
+      if (board.turns.last.action == Action.skipped) {
+        print('');
+        if (players[playerIndex] is ShellPlayer) print('You have been skipped');
+        else print('${players[playerIndex].name} has been skipped');
+      }
       playerIndex = playerIndex == 0 ? 1 : 0;
     }
 

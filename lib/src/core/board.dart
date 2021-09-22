@@ -23,10 +23,12 @@ class Board {
   Card get previous => discardPile[discardPile.size - 1];
 
   /// The [Turn]s taken on this board
-  TurnStack _turns = new TurnStack();
+  late final TurnStack turns;
 
   /// The [GameSettings] used during play on this board.
   GameSettings gameSettings;
+
+  bool _isInSkip = false;
 
   /// Starts the game by dealing [Card]s to all [players]' [Player.hand]s.
   ///
@@ -51,22 +53,24 @@ class Board {
     deck.deal(discardPile, 1);
     deck.dealAll(drawPile);
     drawPile.shuffle();
+    if (previous.rank == 1) _isInSkip = true;
+    turns = TurnStack(this);
   }
 
   /// Can redo the previous [Turn]
-  bool get canRedo => gameSettings.enableUndoRedo ? _turns.canRedo : false;
+  bool get canRedo => gameSettings.enableUndoRedo ? turns.canRedo : false;
 
   /// Can undo the previous [Turn]
-  bool get canUndo => gameSettings.enableUndoRedo ? _turns.canUndo : false;
+  bool get canUndo => gameSettings.enableUndoRedo ? turns.canUndo : false;
 
   /// Undoes the previous [Turn] on the board.
   void undo() {
-    if (canUndo) _turns.undo();
+    if (canUndo) turns.undo();
   }
 
   /// Reddoes the previously undone [Turn] on the board.
   void redo() {
-    if (canRedo) _turns.redo();
+    if (canRedo) turns.redo();
   }
 
   /// Removes and adds the topmost [Card] in the [drawPile] to [player]'s hand.
@@ -77,11 +81,8 @@ class Board {
       discardPile.add(last);
       drawPile.shuffle();
     }
-    _turns.add(Turn(
-        action: 'drew',
-        card: drawPile.removeLast(),
-        board: this,
-        player: player));
+    turns.add(Turn(
+        action: Action.drew, cards: [drawPile.removeLast()], player: player));
   }
 
   /// Takes a [card] played by a [player] when taking a [Turn].
@@ -90,10 +91,20 @@ class Board {
   /// [previous] card on the [discardPile].
   void play(Player player, Card card) {
     if (card.rank == previous.rank || card.matchSuit(previous)) {
-      _turns
-          .add(Turn(action: 'played', card: card, board: this, player: player));
+      turns.add(Turn(action: Action.played, cards: [card], player: player));
+      if (previous.rank == 1) _isInSkip = true;
     } else {
       throw UnmatchedCardException(played: card, previous: previous);
+    }
+  }
+
+  /// Permits [player] to take a [Turn] and ensures game rules are observed.
+  enter(Player player) {
+    if (_isInSkip) {
+      _isInSkip = false;
+      turns.add(Turn(action: Action.skipped, cards: [], player: player));
+    } else {
+      player.play(this);
     }
   }
 }
