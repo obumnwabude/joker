@@ -53,7 +53,7 @@ class Board {
     deck.deal(discardPile, 1);
     deck.dealAll(drawPile);
     drawPile.shuffle();
-    if (previous.rank == 1) _isInSkip = true;
+    if (gameSettings.aceSkipsPlayers && previous.rank == 1) _isInSkip = true;
     turns = TurnStack(this);
   }
 
@@ -92,7 +92,7 @@ class Board {
   void play(Player player, Card card) {
     if (card.rank == previous.rank || card.matchSuit(previous)) {
       turns.add(Turn(action: Action.played, cards: [card], player: player));
-      if (previous.rank == 1) _isInSkip = true;
+      if (gameSettings.aceSkipsPlayers && previous.rank == 1) _isInSkip = true;
     } else {
       throw UnmatchedCardException(played: card, previous: previous);
     }

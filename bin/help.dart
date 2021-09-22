@@ -25,14 +25,17 @@ COMMANDS:
   Displays the current version of joker.
   
 OPTIONS:  
+  --ace-skips-players/--no-ace-skips-players
+  Whether if a played Ace skips the next player to take turn.
+  
   --hand-size
   Sets the initial hand size for game play. Accepts any whole number from 1 to 10.
   
-  --undo-redo/--no-undo-redo
-  Enable undoing and redoing during game play.
-  
   --include-jokers/--no-include-jokers
   Whether to include the red and black joker cards in the game or not.
+  
+  --undo-redo/--no-undo-redo
+  Enable undoing and redoing during game play.
   
   --use-two-decks
   Whether to use two decks of cards in the game. Some cards will appear twice if this flag is used.''';

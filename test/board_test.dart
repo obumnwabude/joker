@@ -3,7 +3,7 @@ import 'package:joker/core.dart';
 
 class TestPlayer extends Player {
   TestPlayer() : super(name: 'Test');
-  
+
   // hard to use a cloned card as one can't tell if the Test SystemPlayer
   // will have a matching card when this test runs.
   void play(Board board) => board.play(this, Card.clone(board.previous));
@@ -56,6 +56,9 @@ void main() {
       }
     });
     test('can accept a playable card by player', () {
+      // this first entry is to resolve skip rule and ensure tests always pass.
+      if (board.previous.rank == 1) board.enter(player);
+
       int oldDiscardPileSize = board.discardPile.size;
       board.enter(player);
       expect(board.discardPile.size, oldDiscardPileSize + 1);

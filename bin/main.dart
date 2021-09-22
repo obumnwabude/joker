@@ -32,17 +32,20 @@ void main(List<String> arguments) async {
     }
 
     final parser = ArgParser()
+      ..addFlag('ace-skips-players', defaultsTo: true)
       ..addOption('hand-size',
-          allowed: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'])
+          allowed: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+          defaultsTo: '5')
       ..addFlag('include-jokers', defaultsTo: true)
-      ..addFlag('use-two-decks', negatable: false, defaultsTo: false)
-      ..addFlag('undo-redo', defaultsTo: false);
+      ..addFlag('undo-redo', defaultsTo: false)
+      ..addFlag('use-two-decks', negatable: false, defaultsTo: false);
     final results = parser.parse(arguments);
     final gameSettings = GameSettings(
+        aceSkipsPlayers: results['ace-skips-players'],
+        enableUndoRedo: results['use-two-decks'],
         initialHandSize: int.parse(results['hand-size']),
         includeJokers: results['include-jokers'],
-        useTwoDecks: results['undo-redo'],
-        enableUndoRedo: results['use-two-decks']);
+        useTwoDecks: results['undo-redo']);
     shell.ShellGame(gameSettings);
   }
 }
