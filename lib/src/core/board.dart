@@ -90,7 +90,7 @@ class Board {
   /// Throws an [UnmatchedCardException] if the played [card] does not match the
   /// [previous] card on the [discardPile].
   void play(Player player, Card card) {
-    if (card.rank == previous.rank || card.matchSuit(previous)) {
+    if (card.rank == previous.rank || card.matchSuit(previous.suit)) {
       turns.add(Turn(action: Action.played, cards: [card], player: player));
       if (gameSettings.aceSkipsPlayers && previous.rank == 1) _isInSkip = true;
     } else {
