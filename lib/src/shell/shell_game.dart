@@ -1,4 +1,5 @@
 import '../core/board.dart';
+import '../core/card.dart';
 import '../core/game.dart';
 import '../core/game_settings.dart';
 import '../core/system_player.dart';
@@ -34,6 +35,10 @@ class ShellGame extends Game {
         }
       }
 
+      if (board.isInCommand) {
+        print('Board is in command. Play requested suit: ' +
+            '"${Card.suits[board.commandedSuit]}" or draw');
+      }
       board.enter(players[playerIndex]);
       if (board.turns.last.action == Action.skipped) {
         if (players[playerIndex] is ShellPlayer) {

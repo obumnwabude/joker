@@ -4,15 +4,20 @@ import './board.dart';
 import './player.dart';
 
 /// Player actions on a [Board].
-enum Action { drew, played, skipped }
+enum Action { commanded, drew, played, skipped }
 
 /// A turn taken on the [Board].
 class Turn {
   final Action action;
   final List<Card> cards;
   final Player player;
+  final int commandedSuit;
 
-  Turn({required this.action, required this.cards, required this.player});
+  Turn(
+      {this.commandedSuit = 0,
+      required this.action,
+      required this.cards,
+      required this.player});
 
   void execute(Board board) {
     switch (action) {

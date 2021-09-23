@@ -11,8 +11,8 @@ class SystemPlayer extends Player {
   void play(Board board) {
     List<Card> matchingCards = hand
         .where((card) =>
-            card.rank == board.previous.rank ||
-            card.matchSuit(board.previous.suit))
+            card.matchSuit(board.previous.suit) ||
+            (!board.isInCommand && card.rank == board.previous.rank))
         .toList()
           ..sort();
 

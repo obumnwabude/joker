@@ -64,6 +64,10 @@ class ShellPlayer implements Player {
         hand.add(played);
         print(e.cause);
         play(board);
+      } on UnmatchedCommandedSuitException catch (e) {
+        hand.add(played);
+        print(e.cause);
+        play(board);
       }
     }
   }

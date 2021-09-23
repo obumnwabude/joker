@@ -30,6 +30,13 @@ class Board {
 
   bool _isInSkip = false;
 
+  /// Indicates that the `suit` of the next played [Card] must match the
+  /// [commandedSuit].
+  bool isInCommand = false;
+
+  /// The suit being requested when this board is [isInCommand].
+  int commandedSuit = 0;
+
   /// Starts the game by dealing [Card]s to all [players]' [Player.hand]s.
   ///
   /// Initializes and shuffles [Deck](s) of [Card]s used for playing on this
@@ -54,6 +61,10 @@ class Board {
     deck.dealAll(drawPile);
     drawPile.shuffle();
     if (gameSettings.aceSkipsPlayers && previous.rank == 1) _isInSkip = true;
+    if (previous.rank == 11) {
+      isInCommand = true;
+      commandedSuit = previous.suit;
+    }
     turns = TurnStack(this);
   }
 
@@ -90,11 +101,33 @@ class Board {
   /// Throws an [UnmatchedCardException] if the played [card] does not match the
   /// [previous] card on the [discardPile].
   void play(Player player, Card card) {
-    if (card.rank == previous.rank || card.matchSuit(previous.suit)) {
-      turns.add(Turn(action: Action.played, cards: [card], player: player));
-      if (gameSettings.aceSkipsPlayers && previous.rank == 1) _isInSkip = true;
+    if (isInCommand) {
+      if (card.matchSuit(commandedSuit)) {
+        turns.add(Turn(action: Action.played, cards: [card], player: player));
+        isInCommand = false;
+      } else {
+        throw UnmatchedCommandedSuitException(
+            played: card, suit: commandedSuit);
+      }
     } else {
-      throw UnmatchedCardException(played: card, previous: previous);
+      if (card.rank == previous.rank || card.matchSuit(previous.suit)) {
+        if (card.rank == 11) {
+          turns.add(Turn(
+              action: Action.commanded,
+              commandedSuit: card.suit,
+              cards: [card],
+              player: player));
+          isInCommand = true;
+          commandedSuit = card.suit;
+        } else {
+          turns.add(Turn(action: Action.played, cards: [card], player: player));
+          if (gameSettings.aceSkipsPlayers && previous.rank == 1) {
+            _isInSkip = true;
+          }
+        }
+      } else {
+        throw UnmatchedCardException(played: card, previous: previous);
+      }
     }
   }
 
@@ -109,11 +142,21 @@ class Board {
   }
 }
 
-/// Thrown when a [Player] attempts to play a [Card] that whose [Card.rank] or
+/// Thrown when a [Player] attempts to play a [Card] whose [Card.rank] or
 /// [Card.suit] does not match the [Board.previous] [Card] on the [Board].
 class UnmatchedCardException implements Exception {
   final Card played;
   final Card previous;
   String get cause => 'Played "$played" does not match previous "$previous".';
   UnmatchedCardException({required this.played, required this.previous});
+}
+
+/// Thrown when a [Player] attempts to play a [Card] whose [Card.suit] does not
+/// match the [Board.commandedSuit] on the [Board].
+class UnmatchedCommandedSuitException implements Exception {
+  final Card played;
+  final int suit;
+  String get cause =>
+      'Played "$played" does not match commanded suit: "${Card.suits[suit]}".';
+  UnmatchedCommandedSuitException({required this.played, required this.suit});
 }
