@@ -102,7 +102,7 @@ class Board {
   /// [previous] card on the [discardPile].
   void play(Player player, Card card) {
     if (isInCommand) {
-      if (card.matchSuit(commandedSuit)) {
+      if (card.rank == previous.rank || card.matchSuit(commandedSuit)) {
         turns.add(Turn(action: Action.played, cards: [card], player: player));
         isInCommand = false;
       } else {
@@ -157,6 +157,7 @@ class UnmatchedCommandedSuitException implements Exception {
   final Card played;
   final int suit;
   String get cause =>
-      'Played "$played" does not match commanded suit: "${Card.suits[suit]}".';
+      'Played "$played" does not match commanded suit: "${Card.suits[suit]}"' +
+      ' or is not a Jack.';
   UnmatchedCommandedSuitException({required this.played, required this.suit});
 }
