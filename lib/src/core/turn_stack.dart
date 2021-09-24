@@ -17,7 +17,12 @@ class Turn {
       {this.commandedSuit = 0,
       required this.action,
       required this.cards,
-      required this.player});
+      required this.player}) {
+    if (action == Action.commanded &&
+        (commandedSuit < 1 || commandedSuit > 4)) {
+      throw NoCommandedSuitProvidedException(player);
+    }
+  }
 
   void execute(Board board) {
     switch (action) {
@@ -80,4 +85,13 @@ class TurnStack {
   void undo() {
     if (canUndo) _redos.addFirst(_history.removeLast()..undo(board));
   }
+}
+
+/// Thrown when a [Action.commanded] action is taken but no
+/// valid [Turn.commandedSuit] is provided. [Turn.commandedSuit] is valid only
+/// when it is between 1 and 4, both ends inclusive.
+class NoCommandedSuitProvidedException implements Exception {
+  final Player player;
+  String get cause => '$player did not specify a suit to command.';
+  NoCommandedSuitProvidedException(this.player);
 }
