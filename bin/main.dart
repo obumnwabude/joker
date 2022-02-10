@@ -32,28 +32,30 @@ void main(List<String> arguments) async {
     }
 
     final parser = ArgParser()
-      ..addFlag('ace-skips-players', defaultsTo: true)
       ..addOption(
         'hand-size',
         allowed: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
         defaultsTo: '5',
       )
-      ..addFlag('include-jokers', negatable: false, defaultsTo: true)
       ..addFlag('undo-redo', defaultsTo: false)
+      ..addFlag('use-two-decks', negatable: false, defaultsTo: false)
+      ..addFlag('include-jokers', negatable: false, defaultsTo: true)
+      ..addFlag('ace-skips-players', negatable: false, defaultsTo: true)
+      ..addFlag('observe-board-jack', negatable: false, defaultsTo: true)
       ..addFlag(
         'allow-jack-when-in-command',
         negatable: false,
         defaultsTo: true,
-      )
-      ..addFlag('use-two-decks', negatable: false, defaultsTo: false);
+      );
     final results = parser.parse(arguments);
     final gameSettings = GameSettings(
       aceSkipsPlayers: results['ace-skips-players'],
-      enableUndoRedo: results['use-two-decks'],
-      initialHandSize: int.parse(results['hand-size']),
-      includeJokers: results['include-jokers'],
-      useTwoDecks: results['undo-redo'],
       allowJackWhenInCommand: results['allow-jack-when-in-command'],
+      enableUndoRedo: results['use-two-decks'],
+      includeJokers: results['include-jokers'],
+      initialHandSize: int.parse(results['hand-size']),
+      observeBoardJack: results['observe-board-jack'],
+      useTwoDecks: results['undo-redo'],
     );
     shell.ShellGame(gameSettings);
   }

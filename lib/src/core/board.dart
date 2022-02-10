@@ -62,7 +62,7 @@ class Board {
     deck.dealAll(drawPile);
     drawPile.shuffle();
     if (gameSettings.aceSkipsPlayers && previous.rank == 1) _isInSkip = true;
-    if (previous.rank == 11) {
+    if (gameSettings.observeBoardJack && previous.rank == 11) {
       isInCommand = true;
       commandedSuit = previous.suit;
     }
@@ -149,7 +149,7 @@ class Board {
 
 /// Thrown when a [Player] attempts to play a [Card] whose [Card.rank] or
 /// [Card.suit] does not match the [Board.previous] [Card] on the [Board].
-class UnmatchedCardException implements Exception {
+class UnmatchedCardException implements JokerException {
   final Card played;
   final Card previous;
   String get cause => 'Played "$played" does not match previous "$previous".';
