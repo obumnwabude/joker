@@ -30,25 +30,25 @@ COMMANDS:
   
 OPTIONS:    
   --hand-size
-  Sets the initial hand size for game play. Accepts any whole number from 1 to 10.
+  Sets the initial hand size for game play. Accepts any whole number from 1 to 10. Defaults to 5.
   
   --undo-redo/--no-undo-redo
-  Enable undoing and redoing during game play.
+  Enable undoing and redoing during game play. Defaults to --no-undo-redo.
   
   --include-jokers
-  Whether to include the red and black joker cards in the game or not.
+  Whether to include the red and black joker cards in the game or not. Defaults to true.
   
   --use-two-decks
-  Whether to use two decks of cards in the game. Some cards will appear twice if this flag is used.
+  Whether to use two decks of cards in the game. Some cards will appear twice if this flag is used. Defaults to false.
 
   --ace-skips-players
-  Whether if a played Ace skips the next player to take turn.
+  Whether if a played Ace skips the next player to take turn. Defaults to true.
   
   --observe-board-jack
-  Whether to observe the suit of the Jack card played by the board on first dealing.
+  Whether to observe the suit of the Jack card played by the board on first dealing as commanded suit. Defaults to true.
   
   --allow-jack-when-in-command
-  Whether to permit players to change the card being commanded with a Jack of a different suit.
+  Whether to permit players to change the card being commanded with a Jack of a different suit. Defaults to true.
   
   --always-allow-jack
-  Whether to permit Jack cards playing at anytime on the board, irrespective of the board's current suit.''';
+  Whether to permit Jack cards playing at anytime on the board, irrespective of the board's current suit. Defaults to false.''';
