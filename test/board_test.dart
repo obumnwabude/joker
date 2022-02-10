@@ -11,13 +11,17 @@ class TestPlayer extends Player {
 
 void main() {
   final player = TestPlayer();
-  final Board board = Board(
-      // the double copyWith is for test coverage
-      gameSettings:
-          GameSettings.defaults().copyWith().copyWith(enableUndoRedo: true),
-      players: [player]);
 
   group('The Board', () {
+    late Board board;
+    setUp(() {
+      board = Board(
+          // the double copyWith is for test coverage
+          gameSettings:
+              GameSettings.defaults().copyWith().copyWith(enableUndoRedo: true),
+          players: [player]);
+    });
+
     test('can be initialized with two decks', () {
       expect(
           Board(
@@ -64,6 +68,8 @@ void main() {
       expect(board.discardPile.size, oldDiscardPileSize + 1);
     });
     test('can undo and redo', () {
+      board.enter(player);
+      board.enter(player);
       // repeat undo twice for code coverage
       expect(board.canUndo, true);
       board.undo();
