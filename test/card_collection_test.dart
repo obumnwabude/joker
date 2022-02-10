@@ -3,11 +3,16 @@ import 'package:joker/core.dart';
 
 void main() {
   group('CardCollections', () {
-    final cc = CardCollection(label: 'test');
+    late CardCollection cc;
     final c1 = Card(rank: 1, suit: 4);
     final d2 = Card(rank: 2, suit: 2);
-    cc.add(c1);
-    cc.add(d2);
+
+    setUp(() {
+      cc = CardCollection(label: 'test');
+      cc.add(c1);
+      cc.add(d2);
+    });
+
     test('are not empty when a card is added', () {
       expect(cc.isEmpty, false);
       expect(cc.size, 2);

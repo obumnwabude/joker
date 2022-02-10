@@ -96,20 +96,20 @@ class Card implements Comparable<Card> {
     }
   }
 
-  /// Checks if the [suit] of this [Card] matches the [suit] of [other].
+  /// Checks if the [suit] of this [Card] matches [other].
   ///
   /// In addition to exact [suit] matching, the `Black` [suit] matches `Clubs`
   /// and `Spades` while the `Red` [suit] matches the `Diamonds` and the
   /// `Hearts` suit.
-  bool matchSuit(Card other) {
-    if (suit == other.suit) return true;
-    if (suit == 5 || other.suit == 5) {
-      if (other.suit == 1 || suit == 1) return true;
-      if (other.suit == 4 || suit == 4) return true;
+  bool matchSuit(int other) {
+    if (suit == other) return true;
+    if (suit == 5 || other == 5) {
+      if (other == 1 || suit == 1) return true;
+      if (other == 4 || suit == 4) return true;
     }
-    if (suit == 6 || other.suit == 6) {
-      if (other.suit == 2 || suit == 2) return true;
-      if (other.suit == 3 || suit == 3) return true;
+    if (suit == 6 || other == 6) {
+      if (other == 2 || suit == 2) return true;
+      if (other == 3 || suit == 3) return true;
     }
     return false;
   }

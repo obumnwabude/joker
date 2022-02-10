@@ -10,7 +10,7 @@ void main() {
       List<Card> matchingCards = player.hand
           .where((card) =>
               card.rank == board.previous.rank ||
-              card.matchSuit(board.previous))
+              card.matchSuit(board.previous.suit))
           .toList();
       // force drawing
       if (!matchingCards.isEmpty) {
@@ -27,7 +27,7 @@ void main() {
       List<Card> matchingCards = player.hand
           .where((card) =>
               card.rank == board.previous.rank ||
-              card.matchSuit(board.previous))
+              card.matchSuit(board.previous.suit))
           .toList()
             ..sort();
       // ensure there is a matching card

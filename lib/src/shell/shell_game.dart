@@ -1,7 +1,9 @@
 import '../core/board.dart';
+import '../core/card.dart';
 import '../core/game.dart';
 import '../core/game_settings.dart';
 import '../core/system_player.dart';
+import '../core/turn_stack.dart';
 import './shell_player.dart';
 
 /// Contains the entry point for the joker card game.
@@ -33,7 +35,24 @@ class ShellGame extends Game {
         }
       }
 
-      players[playerIndex].play(board);
+      if (board.isInCommand) {
+        print('Board is in command. Play requested suit: ' +
+            '"${Card.suits[board.commandedSuit]}" or draw');
+      }
+      board.enter(players[playerIndex]);
+      if (board.turns.last.action == Action.skipped) {
+        if (players[playerIndex] is ShellPlayer) {
+          print('You have been skipped');
+        } else {
+          print('${players[playerIndex].name} has been skipped');
+        }
+      } else if (players[playerIndex] is SystemPlayer) {
+        if (board.turns.last.action == Action.drew) {
+          print('${players[playerIndex].name} drew a card from board');
+        } else if (board.turns.last.action == Action.played) {
+          print('${players[playerIndex].name} played "${board.previous}"');
+        }
+      }
       playerIndex = playerIndex == 0 ? 1 : 0;
     }
 

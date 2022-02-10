@@ -3,18 +3,25 @@ import 'package:joker/core.dart';
 
 class TestPlayer extends Player {
   TestPlayer() : super(name: 'Test');
-  void play(_) {}
+
+  // hard to use a cloned card as one can't tell if the Test SystemPlayer
+  // will have a matching card when this test runs.
+  void play(Board board) => board.play(this, Card.clone(board.previous));
 }
 
 void main() {
   final player = TestPlayer();
-  final Board board = Board(
-      // the double copyWith is for test coverage
-      gameSettings:
-          GameSettings.defaults().copyWith().copyWith(enableUndoRedo: true),
-      players: [player]);
 
   group('The Board', () {
+    late Board board;
+    setUp(() {
+      board = Board(
+          // the double copyWith is for test coverage
+          gameSettings:
+              GameSettings.defaults().copyWith().copyWith(enableUndoRedo: true),
+          players: [player]);
+    });
+
     test('can be initialized with two decks', () {
       expect(
           Board(
@@ -53,13 +60,16 @@ void main() {
       }
     });
     test('can accept a playable card by player', () {
+      // this first entry is to resolve skip rule and ensure tests always pass.
+      if (board.previous.rank == 1) board.enter(player);
+
       int oldDiscardPileSize = board.discardPile.size;
-      // hard to use a cloned card as one can't tell if the Test SystemPlayer
-      // will have a matching card when this test runs.
-      board.play(player, Card.clone(board.previous));
+      board.enter(player);
       expect(board.discardPile.size, oldDiscardPileSize + 1);
     });
     test('can undo and redo', () {
+      board.enter(player);
+      board.enter(player);
       // repeat undo twice for code coverage
       expect(board.canUndo, true);
       board.undo();
@@ -67,6 +77,17 @@ void main() {
       board.undo();
       expect(board.canRedo, true);
       board.redo();
+    });
+    test('can get players skipped', () {
+      int matchingSuit = board.previous.suit;
+      if (matchingSuit == 5)
+        matchingSuit = 1;
+      else if (matchingSuit == 6) matchingSuit = 2;
+      board.play(player, Card(rank: 1, suit: matchingSuit));
+
+      board.enter(player);
+
+      expect(board.turns.last.action, Action.skipped);
     });
   });
 }

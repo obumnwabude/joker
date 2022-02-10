@@ -1,3 +1,4 @@
+import 'joker_exception.dart';
 import 'turn_stack.dart';
 import './card.dart';
 import './card_collection.dart';
@@ -23,10 +24,19 @@ class Board {
   Card get previous => discardPile[discardPile.size - 1];
 
   /// The [Turn]s taken on this board
-  TurnStack _turns = new TurnStack();
+  late final TurnStack turns;
 
   /// The [GameSettings] used during play on this board.
   GameSettings gameSettings;
+
+  bool _isInSkip = false;
+
+  /// Indicates that the `suit` of the next played [Card] must match the
+  /// [commandedSuit].
+  bool isInCommand = false;
+
+  /// The suit being requested when this board is [isInCommand].
+  int commandedSuit = 0;
 
   /// Starts the game by dealing [Card]s to all [players]' [Player.hand]s.
   ///
@@ -51,22 +61,28 @@ class Board {
     deck.deal(discardPile, 1);
     deck.dealAll(drawPile);
     drawPile.shuffle();
+    if (gameSettings.aceSkipsPlayers && previous.rank == 1) _isInSkip = true;
+    if (gameSettings.observeBoardJack && previous.rank == 11) {
+      isInCommand = true;
+      commandedSuit = previous.suit;
+    }
+    turns = TurnStack(this);
   }
 
   /// Can redo the previous [Turn]
-  bool get canRedo => gameSettings.enableUndoRedo ? _turns.canRedo : false;
+  bool get canRedo => gameSettings.enableUndoRedo ? turns.canRedo : false;
 
   /// Can undo the previous [Turn]
-  bool get canUndo => gameSettings.enableUndoRedo ? _turns.canUndo : false;
+  bool get canUndo => gameSettings.enableUndoRedo ? turns.canUndo : false;
 
   /// Undoes the previous [Turn] on the board.
   void undo() {
-    if (canUndo) _turns.undo();
+    if (canUndo) turns.undo();
   }
 
   /// Reddoes the previously undone [Turn] on the board.
   void redo() {
-    if (canRedo) _turns.redo();
+    if (canRedo) turns.redo();
   }
 
   /// Removes and adds the topmost [Card] in the [drawPile] to [player]'s hand.
@@ -77,11 +93,8 @@ class Board {
       discardPile.add(last);
       drawPile.shuffle();
     }
-    _turns.add(Turn(
-        action: 'drew',
-        card: drawPile.removeLast(),
-        board: this,
-        player: player));
+    turns.add(Turn(
+        action: Action.drew, cards: [drawPile.removeLast()], player: player));
   }
 
   /// Takes a [card] played by a [player] when taking a [Turn].
@@ -89,20 +102,72 @@ class Board {
   /// Throws an [UnmatchedCardException] if the played [card] does not match the
   /// [previous] card on the [discardPile].
   void play(Player player, Card card) {
-    if (card.rank == previous.rank || card.matchSuit(previous)) {
-      _turns
-          .add(Turn(action: 'played', card: card, board: this, player: player));
+    if (isInCommand) {
+      if (card.matchSuit(commandedSuit) ||
+          (gameSettings.allowJackWhenInCommand && card.rank == previous.rank)) {
+        turns.add(Turn(action: Action.played, cards: [card], player: player));
+        isInCommand = false;
+      } else {
+        throw UnmatchedCommandedSuitException(
+          played: card,
+          suit: commandedSuit,
+          isJackAllowed: gameSettings.allowJackWhenInCommand,
+        );
+      }
     } else {
-      throw UnmatchedCardException(played: card, previous: previous);
+      if (card.rank == previous.rank ||
+          card.matchSuit(previous.suit) ||
+          (gameSettings.alwaysAllowJack && card.rank == 11)) {
+        if (card.rank == 11) {
+          turns.add(Turn(
+            action: Action.commanded,
+            commandedSuit: card.suit,
+            cards: [card],
+            player: player,
+          ));
+          isInCommand = true;
+          commandedSuit = card.suit;
+        } else {
+          turns.add(Turn(action: Action.played, cards: [card], player: player));
+          if (gameSettings.aceSkipsPlayers && previous.rank == 1) {
+            _isInSkip = true;
+          }
+        }
+      } else {
+        throw UnmatchedCardException(played: card, previous: previous);
+      }
+    }
+  }
+
+  /// Permits [player] to take a [Turn] and ensures game rules are observed.
+  enter(Player player) {
+    if (_isInSkip) {
+      _isInSkip = false;
+      turns.add(Turn(action: Action.skipped, cards: [], player: player));
+    } else {
+      player.play(this);
     }
   }
 }
 
-/// Thrown when a [Player] attempts to play a [Card] that whose [Card.rank] or
+/// Thrown when a [Player] attempts to play a [Card] whose [Card.rank] or
 /// [Card.suit] does not match the [Board.previous] [Card] on the [Board].
-class UnmatchedCardException implements Exception {
+class UnmatchedCardException implements JokerException {
   final Card played;
   final Card previous;
   String get cause => 'Played "$played" does not match previous "$previous".';
   UnmatchedCardException({required this.played, required this.previous});
+}
+
+/// Thrown when a [Player] attempts to play a [Card] whose [Card.suit] does not
+/// match the [Board.commandedSuit] on the [Board].
+class UnmatchedCommandedSuitException implements JokerException {
+  final Card played;
+  final int suit;
+  final bool isJackAllowed;
+  String get cause =>
+      'Played "$played" does not match commanded suit: "${Card.suits[suit]}"' +
+      (isJackAllowed ? ' or is not a Jack.' : '');
+  UnmatchedCommandedSuitException(
+      {required this.played, required this.suit, required this.isJackAllowed});
 }

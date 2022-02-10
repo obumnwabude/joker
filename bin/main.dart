@@ -32,17 +32,33 @@ void main(List<String> arguments) async {
     }
 
     final parser = ArgParser()
-      ..addOption('hand-size',
-          allowed: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'])
-      ..addFlag('include-jokers', defaultsTo: true)
+      ..addOption(
+        'hand-size',
+        allowed: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+        defaultsTo: '5',
+      )
+      ..addFlag('undo-redo', defaultsTo: false)
       ..addFlag('use-two-decks', negatable: false, defaultsTo: false)
-      ..addFlag('undo-redo', defaultsTo: false);
+      ..addFlag('include-jokers', negatable: false, defaultsTo: true)
+      ..addFlag('ace-skips-players', negatable: false, defaultsTo: true)
+      ..addFlag('observe-board-jack', negatable: false, defaultsTo: true)
+      ..addFlag(
+        'allow-jack-when-in-command',
+        negatable: false,
+        defaultsTo: true,
+      )
+      ..addFlag('always-allow-jack', negatable: false, defaultsTo: true);
     final results = parser.parse(arguments);
     final gameSettings = GameSettings(
-        initialHandSize: int.parse(results['hand-size']),
-        includeJokers: results['include-jokers'],
-        useTwoDecks: results['undo-redo'],
-        enableUndoRedo: results['use-two-decks']);
+      aceSkipsPlayers: results['ace-skips-players'],
+      allowJackWhenInCommand: results['allow-jack-when-in-command'],
+      alwaysAllowJack: !results['always-allow-jack'],
+      enableUndoRedo: results['use-two-decks'],
+      includeJokers: results['include-jokers'],
+      initialHandSize: int.parse(results['hand-size']),
+      observeBoardJack: results['observe-board-jack'],
+      useTwoDecks: results['undo-redo'],
+    );
     shell.ShellGame(gameSettings);
   }
 }

@@ -9,19 +9,17 @@ class SystemPlayer extends Player {
 
   @override
   void play(Board board) {
-    print('');
     List<Card> matchingCards = hand
         .where((card) =>
-            card.rank == board.previous.rank || card.matchSuit(board.previous))
+            card.matchSuit(board.previous.suit) ||
+            (!board.isInCommand && card.rank == board.previous.rank))
         .toList()
           ..sort();
 
     if (matchingCards.isEmpty) {
       draw(board);
-      print('$name drew a card from board.');
     } else {
       board.play(this, hand.removeAt(hand.indexOf(matchingCards.last)));
-      print('$name played "${board.previous}"');
     }
   }
 }

@@ -14,8 +14,8 @@ void main() {
       expect(r14.toString(), 'Red Joker');
     });
     test('have Black and Red suits matching appropriately', () {
-      expect(s1.matchSuit(b14), true);
-      expect(h6.matchSuit(r14), true);
+      expect(s1.matchSuit(b14.suit), true);
+      expect(h6.matchSuit(r14.suit), true);
     });
     test('when cloned should be equal', () {
       expect(s1.rank, s1Cloned.rank);
