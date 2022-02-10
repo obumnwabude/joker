@@ -2,6 +2,7 @@ import 'dart:io';
 import '../core/board.dart';
 import '../core/card.dart';
 import '../core/card_collection.dart';
+import '../core/joker_exception.dart';
 import '../core/player.dart';
 
 /// An external player of the joker card game in the terminal.
@@ -60,11 +61,7 @@ class ShellPlayer implements Player {
       Card played = hand.removeAt(option - 1);
       try {
         board.play(this, played);
-      } on UnmatchedCardException catch (e) {
-        hand.add(played);
-        print(e.cause);
-        play(board);
-      } on UnmatchedCommandedSuitException catch (e) {
+      } on JokerException catch (e) {
         hand.add(played);
         print(e.cause);
         play(board);

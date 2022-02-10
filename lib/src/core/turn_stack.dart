@@ -2,6 +2,7 @@ import 'dart:collection';
 import './card.dart';
 import './board.dart';
 import './player.dart';
+import 'joker_exception.dart';
 
 /// Player actions on a [Board].
 enum Action { commanded, drew, played, skipped }
@@ -90,7 +91,7 @@ class TurnStack {
 /// Thrown when a [Action.commanded] action is taken but no
 /// valid [Turn.commandedSuit] is provided. [Turn.commandedSuit] is valid only
 /// when it is between 1 and 4, both ends inclusive.
-class NoCommandedSuitProvidedException implements Exception {
+class NoCommandedSuitProvidedException implements JokerException {
   final Player player;
   String get cause => '$player did not specify a suit to command.';
   NoCommandedSuitProvidedException(this.player);

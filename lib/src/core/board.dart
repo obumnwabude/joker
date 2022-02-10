@@ -1,3 +1,4 @@
+import 'joker_exception.dart';
 import 'turn_stack.dart';
 import './card.dart';
 import './card_collection.dart';
@@ -157,7 +158,7 @@ class UnmatchedCardException implements Exception {
 
 /// Thrown when a [Player] attempts to play a [Card] whose [Card.suit] does not
 /// match the [Board.commandedSuit] on the [Board].
-class UnmatchedCommandedSuitException implements Exception {
+class UnmatchedCommandedSuitException implements JokerException {
   final Card played;
   final int suit;
   final bool isJackAllowed;
