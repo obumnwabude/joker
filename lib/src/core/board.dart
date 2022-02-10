@@ -103,7 +103,7 @@ class Board {
   /// [previous] card on the [discardPile].
   void play(Player player, Card card) {
     if (isInCommand) {
-      if (card.matchSuit(previous.suit) ||
+      if (card.matchSuit(commandedSuit) ||
           (gameSettings.allowJackWhenInCommand && card.rank == previous.rank)) {
         turns.add(Turn(action: Action.played, cards: [card], player: player));
         isInCommand = false;
@@ -116,7 +116,7 @@ class Board {
       }
     } else {
       if (card.rank == previous.rank ||
-          card.matchSuit(commandedSuit) ||
+          card.matchSuit(previous.suit) ||
           (gameSettings.alwaysAllowJack && card.rank == 11)) {
         if (card.rank == 11) {
           turns.add(Turn(
