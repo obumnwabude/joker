@@ -48,4 +48,7 @@ OPTIONS:
   Whether to observe the suit of the Jack card played by the board on first dealing.
   
   --allow-jack-when-in-command
-  Whether to permit players to change the card being commanded with a Jack of a different suit.''';
+  Whether to permit players to change the card being commanded with a Jack of a different suit.
+  
+  --always-allow-jack
+  Whether to permit Jack cards playing at anytime on the board, irrespective of the board's current suit.''';

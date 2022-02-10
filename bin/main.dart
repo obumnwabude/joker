@@ -46,11 +46,13 @@ void main(List<String> arguments) async {
         'allow-jack-when-in-command',
         negatable: false,
         defaultsTo: true,
-      );
+      )
+      ..addFlag('always-allow-jack', negatable: false, defaultsTo: true);
     final results = parser.parse(arguments);
     final gameSettings = GameSettings(
       aceSkipsPlayers: results['ace-skips-players'],
       allowJackWhenInCommand: results['allow-jack-when-in-command'],
+      alwaysAllowJack: !results['always-allow-jack'],
       enableUndoRedo: results['use-two-decks'],
       includeJokers: results['include-jokers'],
       initialHandSize: int.parse(results['hand-size']),

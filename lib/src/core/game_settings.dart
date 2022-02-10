@@ -4,6 +4,7 @@ import './board.dart';
 class GameSettings {
   final bool aceSkipsPlayers;
   final bool allowJackWhenInCommand;
+  final bool alwaysAllowJack;
   final bool enableUndoRedo;
   final bool includeJokers;
   final int initialHandSize;
@@ -11,8 +12,9 @@ class GameSettings {
   final bool useTwoDecks;
 
   GameSettings({
-    required this.allowJackWhenInCommand,
     required this.aceSkipsPlayers,
+    required this.allowJackWhenInCommand,
+    required this.alwaysAllowJack,
     required this.enableUndoRedo,
     required this.includeJokers,
     required this.initialHandSize,
@@ -23,6 +25,7 @@ class GameSettings {
   factory GameSettings.defaults() => GameSettings(
         aceSkipsPlayers: true,
         allowJackWhenInCommand: true,
+        alwaysAllowJack: false,
         enableUndoRedo: false,
         includeJokers: true,
         initialHandSize: 5,
@@ -33,6 +36,7 @@ class GameSettings {
   GameSettings copyWith({
     bool? aceSkipsPlayers,
     bool? allowJackWhenInCommand,
+    bool? alwaysAllowJack,
     bool? enableUndoRedo,
     bool? includeJokers,
     int? initialHandSize,
@@ -43,6 +47,7 @@ class GameSettings {
       aceSkipsPlayers: aceSkipsPlayers ?? this.aceSkipsPlayers,
       allowJackWhenInCommand:
           allowJackWhenInCommand ?? this.allowJackWhenInCommand,
+      alwaysAllowJack: alwaysAllowJack ?? this.alwaysAllowJack,
       enableUndoRedo: enableUndoRedo ?? this.enableUndoRedo,
       includeJokers: includeJokers ?? this.includeJokers,
       initialHandSize: initialHandSize ?? this.initialHandSize,
