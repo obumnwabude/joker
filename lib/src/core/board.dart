@@ -107,10 +107,14 @@ class Board {
         isInCommand = false;
       } else {
         throw UnmatchedCommandedSuitException(
-            played: card, suit: commandedSuit);
+          played: card,
+          suit: commandedSuit,
+          isJackAllowed: gameSettings.allowJackWhenInCommand,
+        );
       }
     } else {
-      if (card.rank == previous.rank || card.matchSuit(previous.suit)) {
+      if (card.matchSuit(previous.suit) ||
+          (gameSettings.allowJackWhenInCommand && card.rank == previous.rank)) {
         if (card.rank == 11) {
           turns.add(Turn(
               action: Action.commanded,
@@ -156,8 +160,10 @@ class UnmatchedCardException implements Exception {
 class UnmatchedCommandedSuitException implements Exception {
   final Card played;
   final int suit;
+  final bool isJackAllowed;
   String get cause =>
       'Played "$played" does not match commanded suit: "${Card.suits[suit]}"' +
-      ' or is not a Jack.';
-  UnmatchedCommandedSuitException({required this.played, required this.suit});
+      (isJackAllowed ? ' or is not a Jack.' : '');
+  UnmatchedCommandedSuitException(
+      {required this.played, required this.suit, required this.isJackAllowed});
 }

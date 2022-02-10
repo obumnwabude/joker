@@ -11,6 +11,10 @@ RULES:
   played on the board. The player taking a turn will have to draw a card from 
   the board if the player doesn't have a matching card in their hand.
 - The first player to finish the cards in their hand wins the game.
+- The Ace card skips the next player.
+- The Jack card puts the board in command mode and the player must command a 
+  particular suit of choice. Next players must play the commanded suit or 
+  another Jack card.
 
 USAGE: joker
        joker [commands] [options]
@@ -38,4 +42,7 @@ OPTIONS:
   Enable undoing and redoing during game play.
   
   --use-two-decks
-  Whether to use two decks of cards in the game. Some cards will appear twice if this flag is used.''';
+  Whether to use two decks of cards in the game. Some cards will appear twice if this flag is used.
+  
+  --allow-jack-when-in-command
+  Whether to permit players to change the card being commanded with a Jack of a different suit.''';
