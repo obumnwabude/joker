@@ -5,7 +5,7 @@ import './player.dart';
 import 'joker_exception.dart';
 
 /// Player actions on a [Board].
-enum Action { commanded, drew, played, skipped }
+enum Action { commanded, drew, picked, played, skipped }
 
 /// A turn taken on the [Board].
 class Turn {
@@ -15,9 +15,9 @@ class Turn {
   final int commandedSuit;
 
   Turn(
-      {this.commandedSuit = 0,
-      required this.action,
-      required this.cards,
+      {required this.action,
+      this.cards = const [],
+      this.commandedSuit = 0,
       required this.player}) {
     if (action == Action.commanded &&
         (commandedSuit < 1 || commandedSuit > 4)) {
@@ -30,7 +30,8 @@ class Turn {
       case Action.skipped:
         break;
       case Action.drew:
-        player.hand.add(cards[0]);
+      case Action.picked:
+        cards.forEach((c) => player.hand.add(c));
         break;
       default:
         board.discardPile.add(cards[0]);
@@ -42,7 +43,9 @@ class Turn {
       case Action.skipped:
         break;
       case Action.drew:
-        board.drawPile.add(player.hand.removeAt(player.hand.indexOf(cards[0])));
+      case Action.picked:
+        cards.forEach((c) =>
+            board.drawPile.add(player.hand.removeAt(player.hand.indexOf(c))));
         break;
       default:
         player.hand.add(board.discardPile.removeLast());
@@ -85,6 +88,12 @@ class TurnStack {
   /// Undo Last Action
   void undo() {
     if (canUndo) _redos.addFirst(_history.removeLast()..undo(board));
+  }
+
+  /// Clears undos and redos
+  void reset() {
+    _history.clear();
+    _redos.clear();
   }
 }
 

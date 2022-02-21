@@ -9,6 +9,7 @@ class GameSettings {
   final bool includeJokers;
   final int initialHandSize;
   final bool observeBoardJack;
+  final bool sevenPicksTwo;
   final bool useTwoDecks;
 
   GameSettings({
@@ -19,6 +20,7 @@ class GameSettings {
     required this.includeJokers,
     required this.initialHandSize,
     required this.observeBoardJack,
+    required this.sevenPicksTwo,
     required this.useTwoDecks,
   });
 
@@ -30,6 +32,7 @@ class GameSettings {
         includeJokers: true,
         initialHandSize: 5,
         observeBoardJack: true,
+        sevenPicksTwo: true,
         useTwoDecks: false,
       );
 
@@ -41,6 +44,7 @@ class GameSettings {
     bool? includeJokers,
     int? initialHandSize,
     bool? observeBoardJack,
+    bool? sevenPicksTwo,
     bool? useTwoDecks,
   }) {
     return GameSettings(
@@ -52,6 +56,7 @@ class GameSettings {
       includeJokers: includeJokers ?? this.includeJokers,
       initialHandSize: initialHandSize ?? this.initialHandSize,
       observeBoardJack: observeBoardJack ?? this.observeBoardJack,
+      sevenPicksTwo: sevenPicksTwo ?? this.sevenPicksTwo,
       useTwoDecks: useTwoDecks ?? this.useTwoDecks,
     );
   }

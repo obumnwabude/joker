@@ -15,6 +15,7 @@ RULES:
 - The Jack card puts the board in command mode and the player must command a 
   particular suit of choice. Next players must play the commanded suit or 
   another Jack card.
+- When a card with 7 is played, the next player has to pick two cards.
 
 USAGE: joker
        joker [commands] [options]
@@ -51,4 +52,7 @@ OPTIONS:
   Whether to permit players to change the card being commanded with a Jack of a different suit. Defaults to true.
   
   --always-allow-jack
-  Whether to permit Jack cards playing at anytime on the board, irrespective of the board's current suit. Defaults to false.''';
+  Whether to permit Jack cards playing at anytime on the board, irrespective of the board's current suit. Defaults to false.
+  
+  --seven-picks-two
+  Enable or disable pick 2 when a seven is played.''';

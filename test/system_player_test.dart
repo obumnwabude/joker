@@ -3,7 +3,7 @@ import 'package:joker/core.dart';
 
 void main() {
   final player = SystemPlayer(name: 'TestSystem');
-  final board = Board(gameSettings: GameSettings.defaults(), players: [player]);
+  final board = Board([player], GameSettings.defaults());
 
   group('System Player', () {
     test('when playing can draw', () {
@@ -29,7 +29,7 @@ void main() {
               card.rank == board.previous.rank ||
               card.matchSuit(board.previous.suit))
           .toList()
-            ..sort();
+        ..sort();
       // ensure there is a matching card
       if (matchingCards.isEmpty) {
         player.hand.add(Card.clone(board.previous));

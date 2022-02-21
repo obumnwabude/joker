@@ -47,7 +47,8 @@ void main(List<String> arguments) async {
         negatable: false,
         defaultsTo: true,
       )
-      ..addFlag('always-allow-jack', negatable: false, defaultsTo: true);
+      ..addFlag('always-allow-jack', negatable: false, defaultsTo: true)
+      ..addFlag('seven-picks-two', negatable: false, defaultsTo: true);
     final results = parser.parse(arguments);
     final gameSettings = GameSettings(
       aceSkipsPlayers: results['ace-skips-players'],
@@ -57,6 +58,7 @@ void main(List<String> arguments) async {
       includeJokers: results['include-jokers'],
       initialHandSize: int.parse(results['hand-size']),
       observeBoardJack: results['observe-board-jack'],
+      sevenPicksTwo: results['seven-picks-two'],
       useTwoDecks: results['undo-redo'],
     );
     shell.ShellGame(gameSettings);

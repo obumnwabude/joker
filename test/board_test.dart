@@ -16,18 +16,19 @@ void main() {
     late Board board;
     setUp(() {
       board = Board(
-          // the double copyWith is for test coverage
-          gameSettings:
-              GameSettings.defaults().copyWith().copyWith(enableUndoRedo: true),
-          players: [player]);
+        [player],
+        // the double copyWith is for test coverage
+        GameSettings.defaults().copyWith().copyWith(enableUndoRedo: true),
+      );
     });
 
     test('can be initialized with two decks', () {
       expect(
           Board(
-              gameSettings: GameSettings.defaults()
-                  .copyWith(useTwoDecks: true, includeJokers: false),
-              players: []).drawPile.size,
+            [],
+            GameSettings.defaults()
+                .copyWith(useTwoDecks: true, includeJokers: false),
+          ).drawPile.size,
           // Greater than 100 because two decks without jokers should be 52 + 52
           // Didn't use equals(104) because as at the commit this code was
           // written, one card will be dealt to drawPile during Board's

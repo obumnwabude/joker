@@ -1,4 +1,5 @@
 import './card.dart';
+import 'joker_exception.dart';
 
 /// A group of cards in the joker card game.
 class CardCollection extends Iterable<Card> {
@@ -99,7 +100,7 @@ class Deck extends CardCollection {
 
 /// Thrown when there are not enough [Card]s to be [CardCollection.deal]t from
 /// a CardCollection.
-class InsufficientCardsException implements Exception {
+class InsufficientCardsException implements JokerException {
   String cause = 'Not enough cards to deal out';
   InsufficientCardsException();
 }

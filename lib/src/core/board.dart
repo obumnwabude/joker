@@ -30,6 +30,7 @@ class Board {
   GameSettings gameSettings;
 
   bool _isInSkip = false;
+  bool _isInPick = false;
 
   /// Indicates that the `suit` of the next played [Card] must match the
   /// [commandedSuit].
@@ -48,7 +49,7 @@ class Board {
   /// by the [GameSettings.initialHandSize] property of [gameSettings]. After
   /// dealing, one [Card] is dealt to the [discardPile], while the other [Card]s
   /// are dealt to the [drawPile].
-  Board({required this.gameSettings, required List<Player> players}) {
+  Board(List<Player> players, this.gameSettings) {
     Deck deck = Deck(includeJokers: gameSettings.includeJokers);
     if (gameSettings.useTwoDecks) {
       Deck(includeJokers: gameSettings.includeJokers).dealAll(deck);
@@ -62,6 +63,7 @@ class Board {
     deck.dealAll(drawPile);
     drawPile.shuffle();
     if (gameSettings.aceSkipsPlayers && previous.rank == 1) _isInSkip = true;
+    if (gameSettings.sevenPicksTwo && previous.rank == 7) _isInPick = true;
     if (gameSettings.observeBoardJack && previous.rank == 11) {
       isInCommand = true;
       commandedSuit = previous.suit;
@@ -85,14 +87,18 @@ class Board {
     if (canRedo) turns.redo();
   }
 
+  /// Reshuffles [discardPile] into [drawPile]
+  void _reshuffle() {
+    Card last = discardPile.removeLast();
+    discardPile.dealAll(drawPile);
+    discardPile.add(last);
+    drawPile.shuffle();
+    turns.reset();
+  }
+
   /// Removes and adds the topmost [Card] in the [drawPile] to [player]'s hand.
   void draw(Player player) {
-    if (drawPile.isEmpty) {
-      Card last = discardPile.removeLast();
-      discardPile.dealAll(drawPile);
-      discardPile.add(last);
-      drawPile.shuffle();
-    }
+    if (drawPile.isEmpty) _reshuffle();
     turns.add(Turn(
         action: Action.drew, cards: [drawPile.removeLast()], player: player));
   }
@@ -107,6 +113,11 @@ class Board {
           (gameSettings.allowJackWhenInCommand && card.rank == previous.rank)) {
         turns.add(Turn(action: Action.played, cards: [card], player: player));
         isInCommand = false;
+        if (gameSettings.aceSkipsPlayers && previous.rank == 1) {
+          _isInSkip = true;
+        } else if (gameSettings.sevenPicksTwo && previous.rank == 7) {
+          _isInPick = true;
+        }
       } else {
         throw UnmatchedCommandedSuitException(
           played: card,
@@ -131,6 +142,8 @@ class Board {
           turns.add(Turn(action: Action.played, cards: [card], player: player));
           if (gameSettings.aceSkipsPlayers && previous.rank == 1) {
             _isInSkip = true;
+          } else if (gameSettings.sevenPicksTwo && previous.rank == 7) {
+            _isInPick = true;
           }
         }
       } else {
@@ -143,7 +156,15 @@ class Board {
   enter(Player player) {
     if (_isInSkip) {
       _isInSkip = false;
-      turns.add(Turn(action: Action.skipped, cards: [], player: player));
+      turns.add(Turn(action: Action.skipped, player: player));
+    } else if (_isInPick) {
+      _isInPick = false;
+      if (drawPile.length < 2) _reshuffle();
+      turns.add(Turn(
+        action: Action.picked,
+        cards: [drawPile.removeLast(), drawPile.removeLast()],
+        player: player,
+      ));
     } else {
       player.play(this);
     }
