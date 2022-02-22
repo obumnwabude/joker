@@ -37,7 +37,7 @@ class ShellGame extends Game {
       }
 
       if (board.isInCommand) {
-        print('Board is in command. Play requested suit: ' +
+        print('Board is in command. Play requested ' +
             '"${Card.suits[board.commandedSuit]}" or draw');
       }
       board.enter(players[i]);

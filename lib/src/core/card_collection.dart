@@ -88,12 +88,12 @@ class Deck extends CardCollection {
       : super(label: 'Deck (with${includeJokers ? '' : 'out'} Jokers)') {
     for (int suit = 1; suit < 5; suit++) {
       for (int rank = 1; rank < 14; rank++) {
-        _cards.add(Card(rank: rank, suit: suit));
+        _cards.add(Card(rank, suit));
       }
     }
     if (includeJokers) {
-      _cards.add(Card(rank: 14, suit: 5));
-      _cards.add(Card(rank: 14, suit: 6));
+      _cards.add(Card(14, 5));
+      _cards.add(Card(14, 6));
     }
   }
 }

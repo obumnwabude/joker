@@ -57,10 +57,10 @@ class Card implements Comparable<Card> {
   /// The [suit] should be a number from `1` to `6`. `1` for `Clubs`, `2` to
   /// `Diamonds`, `3` for `Hearts`, `4` for `Spades`, `5` for `Black`, and `6`
   /// for `Red`.
-  Card({required this.rank, required this.suit});
+  Card(this.rank, this.suit);
 
   /// Creates and returns a [Card] whose [rank] and [suit] are those of [other].
-  factory Card.clone(Card other) => Card(rank: other.rank, suit: other.suit);
+  factory Card.clone(Card other) => Card(other.rank, other.suit);
 
   @override
   String toString() {

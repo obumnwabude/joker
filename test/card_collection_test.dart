@@ -4,8 +4,8 @@ import 'package:joker/core.dart';
 void main() {
   group('CardCollections', () {
     late CardCollection cc;
-    final c1 = Card(rank: 1, suit: 4);
-    final d2 = Card(rank: 2, suit: 2);
+    final c1 = Card(1, 4);
+    final d2 = Card(2, 2);
 
     setUp(() {
       cc = CardCollection(label: 'test');

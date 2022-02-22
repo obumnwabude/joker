@@ -2,10 +2,10 @@ import 'package:test/test.dart';
 import 'package:joker/core.dart';
 
 void main() {
-  final s1 = Card(rank: 1, suit: 4);
-  final b14 = Card(rank: 14, suit: 5);
-  final h6 = Card(rank: 6, suit: 3);
-  final r14 = Card(rank: 14, suit: 6);
+  final s1 = Card(1, 4);
+  final b14 = Card(14, 5);
+  final h6 = Card(6, 3);
+  final r14 = Card(14, 6);
   final s1Cloned = Card.clone(s1);
 
   group('Cards', () {

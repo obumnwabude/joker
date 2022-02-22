@@ -49,9 +49,9 @@ void main() {
     test('should throw exception if unmatched card is played', () {
       Card unmatchedCard;
       if ([1, 4, 5].any((suit) => suit == board.previous.suit))
-        unmatchedCard = Card(rank: 14, suit: 6);
+        unmatchedCard = Card(14, 6);
       else
-        unmatchedCard = Card(rank: 14, suit: 5);
+        unmatchedCard = Card(14, 5);
 
       try {
         board.play(player, unmatchedCard);
@@ -84,7 +84,7 @@ void main() {
       if (matchingSuit == 5)
         matchingSuit = 1;
       else if (matchingSuit == 6) matchingSuit = 2;
-      board.play(player, Card(rank: 1, suit: matchingSuit));
+      board.play(player, Card(1, matchingSuit));
 
       board.enter(player);
 
