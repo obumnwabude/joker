@@ -41,7 +41,7 @@ void main(List<String> arguments) async {
       ..addFlag('use-two-decks', negatable: false, defaultsTo: false)
       ..addFlag('include-jokers', negatable: false, defaultsTo: true)
       ..addFlag('ace-skips-players', negatable: false, defaultsTo: true)
-      ..addFlag('observe-board-jack', negatable: false, defaultsTo: true)
+      ..addFlag('allow-any-on-board-jack', negatable: false, defaultsTo: true)
       ..addFlag(
         'allow-jack-when-in-command',
         negatable: false,
@@ -52,12 +52,12 @@ void main(List<String> arguments) async {
     final results = parser.parse(arguments);
     final gameSettings = GameSettings(
       aceSkipsPlayers: results['ace-skips-players'],
+      allowAnyOnBoardJack: results['allow-any-on-board-jack'],
       allowJackWhenInCommand: results['allow-jack-when-in-command'],
       alwaysAllowJack: !results['always-allow-jack'],
       enableUndoRedo: results['use-two-decks'],
       includeJokers: results['include-jokers'],
       initialHandSize: int.parse(results['hand-size']),
-      observeBoardJack: results['observe-board-jack'],
       sevenPicksTwo: results['seven-picks-two'],
       useTwoDecks: results['undo-redo'],
     );

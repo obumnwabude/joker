@@ -45,8 +45,8 @@ OPTIONS:
   --ace-skips-players
   Whether if a played Ace skips the next player to take turn. Defaults to true.
   
-  --observe-board-jack
-  Whether to observe the suit of the Jack card played by the board on first dealing as commanded suit. Defaults to true.
+  --allow-any-on-board-jack
+  Whether to ignore the suit of the Jack card played by the board on first dealing and permit any unmatching card. If false, the commanded suit would be that of the Jack played by the board. Defaults to true.
   
   --allow-jack-when-in-command
   Whether to permit players to change the card being commanded with a Jack of a different suit. Defaults to true.

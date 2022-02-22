@@ -64,7 +64,7 @@ class Board {
     drawPile.shuffle();
     if (gameSettings.aceSkipsPlayers && previous.rank == 1) _isInSkip = true;
     if (gameSettings.sevenPicksTwo && previous.rank == 7) _isInPick = true;
-    if (gameSettings.observeBoardJack && previous.rank == 11) {
+    if (!gameSettings.allowAnyOnBoardJack && previous.rank == 11) {
       isInCommand = true;
       commandedSuit = previous.suit;
     }
@@ -120,7 +120,15 @@ class Board {
     } else if (card.rank == previous.rank ||
         card.matchSuit(previous.suit) ||
         (isInCommand && card.matchSuit(commandedSuit)) ||
-        (gameSettings.alwaysAllowJack && card.rank == 11)) {
+        (gameSettings.alwaysAllowJack && card.rank == 11) ||
+        // had to use the following combination to permit playing an unmatched
+        // card when allowAnyOnBoardJack is true and to attempt to detect that
+        // this would be the very first move of the game (though these
+        // checks might be a little inaccurate)
+        (!canUndo &&
+            discardPile.length == 1 &&
+            gameSettings.allowAnyOnBoardJack &&
+            player.hand.length == gameSettings.initialHandSize - 1)) {
       if (isInCommand) isInCommand = false;
       if (card.rank == 11) {
         turns.add(Turn(
@@ -131,8 +139,10 @@ class Board {
         ));
         isInCommand = true;
         // no need of demanding the player's command choice when they have won.
-        if (player.hand.isEmpty) commandedSuit = card.suit;
-        else commandedSuit = player.command;
+        if (player.hand.isEmpty)
+          commandedSuit = card.suit;
+        else
+          commandedSuit = player.command;
       } else {
         turns.add(Turn(action: Action.played, cards: [card], player: player));
         if (gameSettings.aceSkipsPlayers && previous.rank == 1) {
