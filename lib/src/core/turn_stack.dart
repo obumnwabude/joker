@@ -2,7 +2,6 @@ import 'dart:collection';
 import './card.dart';
 import './board.dart';
 import './player.dart';
-import 'joker_exception.dart';
 
 /// Player actions on a [Board].
 enum Action { commanded, drew, picked, played, skipped }
@@ -18,12 +17,7 @@ class Turn {
       {required this.action,
       this.cards = const [],
       this.commandedSuit = 0,
-      required this.player}) {
-    if (action == Action.commanded &&
-        (commandedSuit < 1 || commandedSuit > 4)) {
-      throw NoCommandedSuitProvidedException(player);
-    }
-  }
+      required this.player});
 
   void execute(Board board) {
     switch (action) {
@@ -95,13 +89,4 @@ class TurnStack {
     _history.clear();
     _redos.clear();
   }
-}
-
-/// Thrown when a [Action.commanded] action is taken but no
-/// valid [Turn.commandedSuit] is provided. [Turn.commandedSuit] is valid only
-/// when it is between 1 and 4, both ends inclusive.
-class NoCommandedSuitProvidedException implements JokerException {
-  final Player player;
-  String get cause => '$player did not specify a suit to command.';
-  NoCommandedSuitProvidedException(this.player);
 }

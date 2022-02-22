@@ -7,6 +7,9 @@ class TestPlayer extends Player {
   // hard to use a cloned card as one can't tell if the Test SystemPlayer
   // will have a matching card when this test runs.
   void play(Board board) => board.play(this, Card.clone(board.previous));
+
+  @override
+  int get command => 1;
 }
 
 void main() {
@@ -61,8 +64,8 @@ void main() {
       }
     });
     test('can accept a playable card by player', () {
-      // this first entry is to resolve skip rule and ensure tests always pass.
-      if (board.previous.rank == 1) board.enter(player);
+      // resolve skip/pick rule to ensure tests always pass.
+      if ([1, 7].contains(board.previous.rank)) board.enter(player);
 
       int oldDiscardPileSize = board.discardPile.size;
       board.enter(player);
@@ -89,6 +92,51 @@ void main() {
       board.enter(player);
 
       expect(board.turns.last.action, Action.skipped);
+    });
+    test('can command suit if Jack was played by a player', () {
+      // resolve skip/pick rule to ensure tests always pass.
+      if ([1, 7].contains(board.previous.rank)) board.enter(player);
+      int matchingSuit = board.previous.suit;
+      if (matchingSuit == 5)
+        matchingSuit = 1;
+      else if (matchingSuit == 6) matchingSuit = 2;
+      board.play(player, Card(11, matchingSuit));
+
+      expect(board.isInCommand, true);
+      expect(board.commandedSuit, 1);
+
+      board.play(player, Card(10, 1));
+      expect(board.isInCommand, false);
+    });
+    test('should throw exception if unmatched card is played when in command',
+        () {
+      board = Board(
+          [player], GameSettings.defaults().copyWith(alwaysAllowJack: true));
+      // resolve skip/pick rule to ensure tests always pass.
+      if ([1, 7].contains(board.previous.rank)) board.enter(player);
+      board.play(player, Card(11, 1));
+      Card unmatchedCard = Card(2, 2);
+
+      try {
+        board.play(player, unmatchedCard);
+      } catch (e) {
+        expect((e as UnmatchedCommandedSuitException).cause,
+            contains(unmatchedCard.toString()));
+      }
+    });
+    test('should make player pick two cards when seven was played', () {
+      // resolve skip/pick rule to ensure tests always pass.
+      if ([1, 7].contains(board.previous.rank)) board.enter(player);
+
+      int matchingSuit = board.previous.suit;
+      if (matchingSuit == 5)
+        matchingSuit = 1;
+      else if (matchingSuit == 6) matchingSuit = 2;
+      board.play(player, Card(7, matchingSuit));
+
+      int prevSize = player.hand.size;
+      board.enter(player);
+      expect(player.hand.size, prevSize + 2);
     });
   });
 }
