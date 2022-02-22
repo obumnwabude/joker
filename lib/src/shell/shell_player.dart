@@ -68,4 +68,17 @@ class ShellPlayer implements Player {
       }
     }
   }
+
+  @override
+  int get command {
+    print('');
+    print('Choose the suit you want to command');
+    Card.suits
+        .skip(1)
+        .take(4)
+        .toList()
+        .asMap()
+        .forEach((k, v) => print('${k + 1}. $v'));
+    return getUserChoice(limit: 5);
+  }
 }

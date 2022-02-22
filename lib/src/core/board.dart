@@ -108,47 +108,41 @@ class Board {
   /// Throws an [UnmatchedCardException] if the played [card] does not match the
   /// [previous] card on the [discardPile].
   void play(Player player, Card card) {
-    if (isInCommand) {
-      if (card.matchSuit(commandedSuit) ||
-          (gameSettings.allowJackWhenInCommand && card.rank == previous.rank)) {
+    if (isInCommand &&
+        !(card.matchSuit(commandedSuit) ||
+            (gameSettings.allowJackWhenInCommand &&
+                card.rank == previous.rank))) {
+      throw UnmatchedCommandedSuitException(
+        played: card,
+        suit: commandedSuit,
+        isJackAllowed: gameSettings.allowJackWhenInCommand,
+      );
+    } else if (card.rank == previous.rank ||
+        card.matchSuit(previous.suit) ||
+        (isInCommand && card.matchSuit(commandedSuit)) ||
+        (gameSettings.alwaysAllowJack && card.rank == 11)) {
+      if (isInCommand) isInCommand = false;
+      if (card.rank == 11) {
+        turns.add(Turn(
+          action: Action.commanded,
+          commandedSuit: card.suit,
+          cards: [card],
+          player: player,
+        ));
+        isInCommand = true;
+        // no need of demanding the player's command choice when they have won.
+        if (player.hand.isEmpty) commandedSuit = card.suit;
+        else commandedSuit = player.command;
+      } else {
         turns.add(Turn(action: Action.played, cards: [card], player: player));
-        isInCommand = false;
         if (gameSettings.aceSkipsPlayers && previous.rank == 1) {
           _isInSkip = true;
         } else if (gameSettings.sevenPicksTwo && previous.rank == 7) {
           _isInPick = true;
         }
-      } else {
-        throw UnmatchedCommandedSuitException(
-          played: card,
-          suit: commandedSuit,
-          isJackAllowed: gameSettings.allowJackWhenInCommand,
-        );
       }
     } else {
-      if (card.rank == previous.rank ||
-          card.matchSuit(previous.suit) ||
-          (gameSettings.alwaysAllowJack && card.rank == 11)) {
-        if (card.rank == 11) {
-          turns.add(Turn(
-            action: Action.commanded,
-            commandedSuit: card.suit,
-            cards: [card],
-            player: player,
-          ));
-          isInCommand = true;
-          commandedSuit = card.suit;
-        } else {
-          turns.add(Turn(action: Action.played, cards: [card], player: player));
-          if (gameSettings.aceSkipsPlayers && previous.rank == 1) {
-            _isInSkip = true;
-          } else if (gameSettings.sevenPicksTwo && previous.rank == 7) {
-            _isInPick = true;
-          }
-        }
-      } else {
-        throw UnmatchedCardException(played: card, previous: previous);
-      }
+      throw UnmatchedCardException(played: card, previous: previous);
     }
   }
 

@@ -11,6 +11,9 @@ abstract class Player {
   Player({required this.name})
       : this.hand = CardCollection(label: '${name}\'s Hand');
 
+  /// Returns the commanded [Card.suit] of choice when a `Jack` was played
+  int get command;
+
   /// Draws a [Card] from [board].
   void draw(Board board) => board.draw(this);
 
