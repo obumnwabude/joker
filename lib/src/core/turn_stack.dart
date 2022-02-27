@@ -11,13 +11,9 @@ class Turn {
   final Action action;
   final List<Card> cards;
   final Player player;
-  final int commandedSuit;
+  final BoardState state;
 
-  Turn(
-      {required this.action,
-      this.cards = const [],
-      this.commandedSuit = 0,
-      required this.player});
+  Turn(this.action, this.cards, this.player, this.state);
 
   void execute(Board board) {
     switch (action) {
@@ -44,6 +40,7 @@ class Turn {
       default:
         player.hand.add(board.discardPile.removeLast());
     }
+    board.state = state;
   }
 }
 

@@ -102,11 +102,11 @@ void main() {
       else if (matchingSuit == 6) matchingSuit = 2;
       board.play(player, Card(11, matchingSuit));
 
-      expect(board.isInCommand, true);
-      expect(board.commandedSuit, 1);
+      expect(board.state.isInCommand, true);
+      expect(board.state.commandedSuit, 1);
 
       board.play(player, Card(10, 1));
-      expect(board.isInCommand, false);
+      expect(board.state.isInCommand, false);
     });
     test('should throw exception if unmatched card is played when in command',
         () {

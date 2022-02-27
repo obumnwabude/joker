@@ -56,12 +56,12 @@ void main(List<String> arguments) async {
       allowAnyOnBoardJack: results['allow-any-on-board-jack'],
       allowJackWhenInCommand: results['allow-jack-when-in-command'],
       alwaysAllowJack: !results['always-allow-jack'],
-      enableUndoRedo: results['use-two-decks'],
+      enableUndoRedo: results['undo-redo'],
       includeJokers: results['include-jokers'],
       initialHandSize: int.parse(results['hand-size']),
       jokerPicksFour: results['joker-picks-four'],
       sevenPicksTwo: results['seven-picks-two'],
-      useTwoDecks: results['undo-redo'],
+      useTwoDecks: results['use-two-decks'],
     );
     shell.ShellGame(gameSettings);
   }

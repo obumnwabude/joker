@@ -10,8 +10,9 @@ class SystemPlayer extends Player {
   @override
   void play(Board board) {
     Iterable<Card> matchingCards;
-    if (board.isInCommand) {
-      matchingCards = hand.where((card) => card.matchSuit(board.commandedSuit));
+    if (board.state.isInCommand) {
+      matchingCards =
+          hand.where((card) => card.matchSuit(board.state.commandedSuit));
     } else {
       matchingCards = hand.where((card) =>
           card.matchSuit(board.previous.suit) ||

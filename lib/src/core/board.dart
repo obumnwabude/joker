@@ -5,6 +5,34 @@ import './card_collection.dart';
 import './game_settings.dart';
 import './player.dart';
 
+/// Contains flags and values that indicate the [Board]'s next action.
+class BoardState {
+  final bool isInCommand;
+  final bool isInPick;
+  final bool isInSkip;
+  final int commandedSuit;
+  final int noCardsToBePicked;
+  BoardState(this.isInCommand, this.isInPick, this.isInSkip, this.commandedSuit,
+      this.noCardsToBePicked);
+
+  factory BoardState.clone(BoardState bs) => BoardState(bs.isInCommand,
+      bs.isInPick, bs.isInSkip, bs.commandedSuit, bs.noCardsToBePicked);
+
+  BoardState copyWith(
+      {bool? isInCommand,
+      bool? isInPick,
+      bool? isInSkip,
+      int? commandedSuit,
+      int? noCardsToBePicked}) {
+    return BoardState(
+        isInCommand ?? this.isInCommand,
+        isInPick ?? this.isInCommand,
+        isInSkip ?? this.isInSkip,
+        commandedSuit ?? this.commandedSuit,
+        noCardsToBePicked ?? this.noCardsToBePicked);
+  }
+}
+
 /// The board on which the joker card game is played.
 ///
 /// The [discardPile] is the pile of [Card]s onto which [Player]s play [Card]s
@@ -29,16 +57,8 @@ class Board {
   /// The [GameSettings] used during play on this board.
   GameSettings gameSettings;
 
-  bool _isInSkip = false;
-  bool _isInPick = false;
-  int _noCardsToBePicked = 0;
-
-  /// Indicates that the `suit` of the next played [Card] must match the
-  /// [commandedSuit].
-  bool isInCommand = false;
-
-  /// The suit being requested when this board is [isInCommand].
-  int commandedSuit = 0;
+  /// The current [BoardState]
+  BoardState state = BoardState(false, false, false, 0, 0);
 
   /// Starts the game by dealing [Card]s to all [players]' [Player.hand]s.
   ///
@@ -63,15 +83,16 @@ class Board {
     deck.deal(discardPile, 1);
     deck.dealAll(drawPile);
     drawPile.shuffle();
-    if (gameSettings.aceSkipsPlayers && previous.rank == 1) _isInSkip = true;
+    if (gameSettings.aceSkipsPlayers && previous.rank == 1) {
+      state = state.copyWith(isInSkip: true);
+    }
     if ((gameSettings.sevenPicksTwo && previous.rank == 7) ||
         (gameSettings.jokerPicksFour && previous.rank == 14)) {
-      _isInPick = true;
-      _noCardsToBePicked = previous.rank == 7 ? 2 : 4;
+      state = state.copyWith(
+          isInPick: true, noCardsToBePicked: previous.rank == 7 ? 2 : 4);
     }
     if (!gameSettings.allowAnyOnBoardJack && previous.rank == 11) {
-      isInCommand = true;
-      commandedSuit = previous.suit;
+      state = state.copyWith(isInCommand: true, commandedSuit: previous.suit);
     }
     turns = TurnStack(this);
   }
@@ -104,8 +125,7 @@ class Board {
   /// Removes and adds the topmost [Card] in the [drawPile] to [player]'s hand.
   void draw(Player player) {
     if (drawPile.isEmpty) _reshuffle();
-    turns.add(Turn(
-        action: Action.drew, cards: [drawPile.removeLast()], player: player));
+    turns.add(Turn(Action.drew, [drawPile.removeLast()], player, state));
   }
 
   /// Takes a [card] played by a [player] when taking a [Turn].
@@ -113,18 +133,18 @@ class Board {
   /// Throws an [UnmatchedCardException] if the played [card] does not match the
   /// [previous] card on the [discardPile].
   void play(Player player, Card card) {
-    if (isInCommand &&
-        !(card.matchSuit(commandedSuit) ||
+    if (state.isInCommand &&
+        !(card.matchSuit(state.commandedSuit) ||
             (gameSettings.allowJackWhenInCommand &&
                 card.rank == previous.rank))) {
       throw UnmatchedCommandedSuitException(
         played: card,
-        suit: commandedSuit,
+        suit: state.commandedSuit,
         isJackAllowed: gameSettings.allowJackWhenInCommand,
       );
     } else if (card.rank == previous.rank ||
         card.matchSuit(previous.suit) ||
-        (isInCommand && card.matchSuit(commandedSuit)) ||
+        (state.isInCommand && card.matchSuit(state.commandedSuit)) ||
         (gameSettings.alwaysAllowJack && card.rank == 11) ||
         // had to use the following combination to permit playing an unmatched
         // card when allowAnyOnBoardJack is true and to attempt to detect that
@@ -134,28 +154,22 @@ class Board {
             discardPile.length == 1 &&
             gameSettings.allowAnyOnBoardJack &&
             player.hand.length == gameSettings.initialHandSize - 1)) {
-      if (isInCommand) isInCommand = false;
+      if (state.isInCommand) {
+        state = state.copyWith(isInCommand: false, commandedSuit: 0);
+      }
       if (card.rank == 11) {
-        turns.add(Turn(
-          action: Action.commanded,
-          commandedSuit: card.suit,
-          cards: [card],
-          player: player,
-        ));
-        isInCommand = true;
-        // no need of demanding the player's command choice when they have won.
-        if (player.hand.isEmpty)
-          commandedSuit = card.suit;
-        else
-          commandedSuit = player.command;
+        turns.add(Turn(Action.commanded, [card], player, state));
+        state = state.copyWith(
+            isInCommand: true,
+            commandedSuit: player.hand.isEmpty ? card.suit : player.command);
       } else {
-        turns.add(Turn(action: Action.played, cards: [card], player: player));
+        turns.add(Turn(Action.played, [card], player, state));
         if (gameSettings.aceSkipsPlayers && previous.rank == 1) {
-          _isInSkip = true;
+          state = state.copyWith(isInSkip: true);
         } else if ((gameSettings.sevenPicksTwo && previous.rank == 7) ||
             (gameSettings.jokerPicksFour && previous.rank == 14)) {
-          _isInPick = true;
-          _noCardsToBePicked = previous.rank == 7 ? 2 : 4;
+          state = state.copyWith(
+              isInPick: true, noCardsToBePicked: previous.rank == 7 ? 2 : 4);
         }
       }
     } else {
@@ -165,22 +179,19 @@ class Board {
 
   /// Permits [player] to take a [Turn] and ensures game rules are observed.
   enter(Player player) {
-    if (_isInSkip) {
-      _isInSkip = false;
-      turns.add(Turn(action: Action.skipped, player: player));
-    } else if (_isInPick) {
-      _isInPick = false;
-      if (drawPile.length < _noCardsToBePicked) _reshuffle();
+    if (state.isInSkip) {
+      state = state.copyWith(isInSkip: false);
+      turns.add(Turn(Action.skipped, [], player, state));
+    } else if (state.isInPick) {
+      if (drawPile.length < state.noCardsToBePicked) _reshuffle();
       List<Card> pickedCards = [];
-      while (_noCardsToBePicked > 0) {
+      int noCardsToBePicked = state.noCardsToBePicked;
+      while (noCardsToBePicked > 0) {
         pickedCards.add(drawPile.removeLast());
-        _noCardsToBePicked--;
+        noCardsToBePicked--;
       }
-      turns.add(Turn(
-        action: Action.picked,
-        cards: pickedCards,
-        player: player,
-      ));
+      state = state.copyWith(isInPick: false, noCardsToBePicked: 0);
+      turns.add(Turn(Action.picked, pickedCards, player, state));
     } else {
       player.play(this);
     }
@@ -197,7 +208,7 @@ class UnmatchedCardException implements JokerException {
 }
 
 /// Thrown when a [Player] attempts to play a [Card] whose [Card.suit] does not
-/// match the [Board.commandedSuit] on the [Board].
+/// match the [Board.state.commandedSuit] on the [Board].
 class UnmatchedCommandedSuitException implements JokerException {
   final Card played;
   final int suit;
