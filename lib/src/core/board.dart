@@ -31,6 +31,7 @@ class Board {
 
   bool _isInSkip = false;
   bool _isInPick = false;
+  int _noCardsToBePicked = 0;
 
   /// Indicates that the `suit` of the next played [Card] must match the
   /// [commandedSuit].
@@ -63,7 +64,11 @@ class Board {
     deck.dealAll(drawPile);
     drawPile.shuffle();
     if (gameSettings.aceSkipsPlayers && previous.rank == 1) _isInSkip = true;
-    if (gameSettings.sevenPicksTwo && previous.rank == 7) _isInPick = true;
+    if ((gameSettings.sevenPicksTwo && previous.rank == 7) ||
+        (gameSettings.jokerPicksFour && previous.rank == 14)) {
+      _isInPick = true;
+      _noCardsToBePicked = previous.rank == 7 ? 2 : 4;
+    }
     if (!gameSettings.allowAnyOnBoardJack && previous.rank == 11) {
       isInCommand = true;
       commandedSuit = previous.suit;
@@ -147,8 +152,10 @@ class Board {
         turns.add(Turn(action: Action.played, cards: [card], player: player));
         if (gameSettings.aceSkipsPlayers && previous.rank == 1) {
           _isInSkip = true;
-        } else if (gameSettings.sevenPicksTwo && previous.rank == 7) {
+        } else if ((gameSettings.sevenPicksTwo && previous.rank == 7) ||
+            (gameSettings.jokerPicksFour && previous.rank == 14)) {
           _isInPick = true;
+          _noCardsToBePicked = previous.rank == 7 ? 2 : 4;
         }
       }
     } else {
@@ -163,10 +170,15 @@ class Board {
       turns.add(Turn(action: Action.skipped, player: player));
     } else if (_isInPick) {
       _isInPick = false;
-      if (drawPile.length < 2) _reshuffle();
+      if (drawPile.length < _noCardsToBePicked) _reshuffle();
+      List<Card> pickedCards = [];
+      while (_noCardsToBePicked > 0) {
+        pickedCards.add(drawPile.removeLast());
+        _noCardsToBePicked--;
+      }
       turns.add(Turn(
         action: Action.picked,
-        cards: [drawPile.removeLast(), drawPile.removeLast()],
+        cards: pickedCards,
         player: player,
       ));
     } else {

@@ -9,6 +9,7 @@ class GameSettings {
   final bool enableUndoRedo;
   final bool includeJokers;
   final int initialHandSize;
+  final bool jokerPicksFour;
   final bool sevenPicksTwo;
   final bool useTwoDecks;
 
@@ -20,6 +21,7 @@ class GameSettings {
     required this.enableUndoRedo,
     required this.includeJokers,
     required this.initialHandSize,
+    required this.jokerPicksFour,
     required this.sevenPicksTwo,
     required this.useTwoDecks,
   });
@@ -32,6 +34,7 @@ class GameSettings {
         enableUndoRedo: false,
         includeJokers: true,
         initialHandSize: 5,
+        jokerPicksFour: true,
         sevenPicksTwo: true,
         useTwoDecks: false,
       );
@@ -44,6 +47,7 @@ class GameSettings {
     bool? enableUndoRedo,
     bool? includeJokers,
     int? initialHandSize,
+    bool? jokerPicksFour,
     bool? sevenPicksTwo,
     bool? useTwoDecks,
   }) {
@@ -56,6 +60,7 @@ class GameSettings {
       enableUndoRedo: enableUndoRedo ?? this.enableUndoRedo,
       includeJokers: includeJokers ?? this.includeJokers,
       initialHandSize: initialHandSize ?? this.initialHandSize,
+      jokerPicksFour: jokerPicksFour ?? this.jokerPicksFour,
       sevenPicksTwo: sevenPicksTwo ?? this.sevenPicksTwo,
       useTwoDecks: useTwoDecks ?? this.useTwoDecks,
     );

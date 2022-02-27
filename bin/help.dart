@@ -16,6 +16,8 @@ RULES:
   particular suit of choice. Next players must play the commanded suit or 
   another Jack card.
 - When a card with 7 is played, the next player has to pick two cards.
+- When either of the Black or Red Joker cards are played, the next player has to
+  pick 4 cards.
 
 USAGE: joker
        joker [commands] [options]
@@ -55,4 +57,8 @@ OPTIONS:
   Whether to permit Jack cards playing at anytime on the board, irrespective of the board's current suit. Defaults to false.
   
   --seven-picks-two
-  Enable or disable pick 2 when a seven is played.''';
+  Enable or disable pick 2 when a seven is played. Defaults to true.
+  
+  --joker-picks-four
+  Enable or disable pick 4 when a Joker card is played. Defaults to true.
+    Note that this flags works if only the --include-jokers flag was true. ''';

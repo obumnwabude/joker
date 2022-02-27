@@ -65,7 +65,7 @@ void main() {
     });
     test('can accept a playable card by player', () {
       // resolve skip/pick rule to ensure tests always pass.
-      if ([1, 7].contains(board.previous.rank)) board.enter(player);
+      if ([1, 7, 14].contains(board.previous.rank)) board.enter(player);
 
       int oldDiscardPileSize = board.discardPile.size;
       board.enter(player);
@@ -95,7 +95,7 @@ void main() {
     });
     test('can command suit if Jack was played by a player', () {
       // resolve skip/pick rule to ensure tests always pass.
-      if ([1, 7].contains(board.previous.rank)) board.enter(player);
+      if ([1, 7, 14].contains(board.previous.rank)) board.enter(player);
       int matchingSuit = board.previous.suit;
       if (matchingSuit == 5)
         matchingSuit = 1;
@@ -113,7 +113,7 @@ void main() {
       board = Board(
           [player], GameSettings.defaults().copyWith(alwaysAllowJack: true));
       // resolve skip/pick rule to ensure tests always pass.
-      if ([1, 7].contains(board.previous.rank)) board.enter(player);
+      if ([1, 7, 14].contains(board.previous.rank)) board.enter(player);
       board.play(player, Card(11, 1));
       Card unmatchedCard = Card(2, 2);
 
@@ -126,7 +126,7 @@ void main() {
     });
     test('should make player pick two cards when seven was played', () {
       // resolve skip/pick rule to ensure tests always pass.
-      if ([1, 7].contains(board.previous.rank)) board.enter(player);
+      if ([1, 7, 14].contains(board.previous.rank)) board.enter(player);
 
       int matchingSuit = board.previous.suit;
       if (matchingSuit == 5)
@@ -137,6 +137,21 @@ void main() {
       int prevSize = player.hand.size;
       board.enter(player);
       expect(player.hand.size, prevSize + 2);
+    });
+    test('should make player pick four cards when joker was played', () {
+      // resolve skip/pick rule to ensure tests always pass.
+      if ([1, 7, 14].contains(board.previous.rank)) board.enter(player);
+
+      int matchingSuit = board.previous.suit;
+      if ([1, 4, 5].contains(matchingSuit))
+        matchingSuit = 5;
+      else
+        matchingSuit = 6;
+      board.play(player, Card(14, matchingSuit));
+
+      int prevSize = player.hand.size;
+      board.enter(player);
+      expect(player.hand.size, prevSize + 4);
     });
   });
 }
