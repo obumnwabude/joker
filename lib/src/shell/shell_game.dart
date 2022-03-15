@@ -5,7 +5,7 @@ import '../core/game_settings.dart';
 import '../core/system_player.dart';
 import '../core/player.dart';
 import '../core/turn_stack.dart';
-import './shell_player.dart';
+import 'shell_player.dart';
 
 /// Contains the entry point for the joker card game.
 class ShellGame extends Game {

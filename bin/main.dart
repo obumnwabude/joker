@@ -1,10 +1,13 @@
 import 'dart:io';
+
 import 'package:args/args.dart';
-import 'package:joker/core.dart';
-import 'package:joker/shell.dart' as shell;
 import 'package:path/path.dart';
 import 'package:yaml/yaml.dart';
-import './help.dart' as help;
+
+import 'package:joker/core.dart';
+import 'package:joker/shell.dart' as shell;
+
+import 'help.dart' as help;
 
 void main(List<String> arguments) async {
   if (arguments.isEmpty) {

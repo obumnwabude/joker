@@ -1,7 +1,9 @@
 import 'dart:collection';
-import './card.dart';
-import './board.dart';
-import './player.dart';
+
+import 'board.dart';
+import 'board_state.dart';
+import 'card.dart';
+import 'player.dart';
 
 /// Player actions on a [Board].
 enum Action { commanded, drew, picked, played, skipped }

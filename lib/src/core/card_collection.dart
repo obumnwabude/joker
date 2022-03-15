@@ -1,4 +1,4 @@
-import './card.dart';
+import 'card.dart';
 import 'joker_exception.dart';
 
 /// A group of cards in the joker card game.
@@ -8,9 +8,6 @@ class CardCollection extends Iterable<Card> {
 
   /// If this CardCollection is empty (has no [Card] in it) or not.
   bool get isEmpty => _cards.length == 0;
-
-  /// The number of [Card]s in this CardCollection.
-  int get size => _cards.length;
 
   /// Creates an empty `CardCollection` with name as [label].
   CardCollection({required String label}) : this._label = label;

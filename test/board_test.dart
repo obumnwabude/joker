@@ -31,7 +31,7 @@ void main() {
             [],
             GameSettings.defaults()
                 .copyWith(useTwoDecks: true, includeJokers: false),
-          ).drawPile.size,
+          ).drawPile.length,
           // Greater than 100 because two decks without jokers should be 52 + 52
           // Didn't use equals(104) because as at the commit this code was
           // written, one card will be dealt to drawPile during Board's
@@ -39,15 +39,15 @@ void main() {
           greaterThan(100));
     });
     test('can draw a card to a player', () {
-      int oldDrawPileSize = board.drawPile.size;
-      int oldPlayerHandSize = player.hand.size;
+      int oldDrawPileLength = board.drawPile.length;
+      int oldPlayerHandLength = player.hand.length;
 
       // for code coverage
       board.drawPile.dealAll(board.discardPile);
 
       board.draw(player);
-      expect(board.drawPile.size, oldDrawPileSize - 1);
-      expect(player.hand.size, oldPlayerHandSize + 1);
+      expect(board.drawPile.length, oldDrawPileLength - 1);
+      expect(player.hand.length, oldPlayerHandLength + 1);
     });
     test('should throw exception if unmatched card is played', () {
       Card unmatchedCard;
@@ -67,9 +67,9 @@ void main() {
       // resolve skip/pick rule to ensure tests always pass.
       if ([1, 7, 14].contains(board.previous.rank)) board.enter(player);
 
-      int oldDiscardPileSize = board.discardPile.size;
+      int oldDiscardPileLength = board.discardPile.length;
       board.enter(player);
-      expect(board.discardPile.size, oldDiscardPileSize + 1);
+      expect(board.discardPile.length, oldDiscardPileLength + 1);
     });
     test('can undo and redo', () {
       board.enter(player);
@@ -134,9 +134,9 @@ void main() {
       else if (matchingSuit == 6) matchingSuit = 2;
       board.play(player, Card(7, matchingSuit));
 
-      int prevSize = player.hand.size;
+      int prevLength = player.hand.length;
       board.enter(player);
-      expect(player.hand.size, prevSize + 2);
+      expect(player.hand.length, prevLength + 2);
     });
     test('should make player pick four cards when joker was played', () {
       // resolve skip/pick rule to ensure tests always pass.
@@ -149,9 +149,9 @@ void main() {
         matchingSuit = 6;
       board.play(player, Card(14, matchingSuit));
 
-      int prevSize = player.hand.size;
+      int prevLength = player.hand.length;
       board.enter(player);
-      expect(player.hand.size, prevSize + 4);
+      expect(player.hand.length, prevLength + 4);
     });
   });
 }

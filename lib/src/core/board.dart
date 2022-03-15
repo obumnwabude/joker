@@ -1,37 +1,10 @@
-import 'joker_exception.dart';
+import 'board_state.dart';
+import 'board_exceptions.dart';
+import 'card.dart';
+import 'card_collection.dart';
+import 'game_settings.dart';
+import 'player.dart';
 import 'turn_stack.dart';
-import './card.dart';
-import './card_collection.dart';
-import './game_settings.dart';
-import './player.dart';
-
-/// Contains flags and values that indicate the [Board]'s next action.
-class BoardState {
-  final bool isInCommand;
-  final bool isInPick;
-  final bool isInSkip;
-  final int commandedSuit;
-  final int noCardsToBePicked;
-  BoardState(this.isInCommand, this.isInPick, this.isInSkip, this.commandedSuit,
-      this.noCardsToBePicked);
-
-  factory BoardState.clone(BoardState bs) => BoardState(bs.isInCommand,
-      bs.isInPick, bs.isInSkip, bs.commandedSuit, bs.noCardsToBePicked);
-
-  BoardState copyWith(
-      {bool? isInCommand,
-      bool? isInPick,
-      bool? isInSkip,
-      int? commandedSuit,
-      int? noCardsToBePicked}) {
-    return BoardState(
-        isInCommand ?? this.isInCommand,
-        isInPick ?? this.isInCommand,
-        isInSkip ?? this.isInSkip,
-        commandedSuit ?? this.commandedSuit,
-        noCardsToBePicked ?? this.noCardsToBePicked);
-  }
-}
 
 /// The board on which the joker card game is played.
 ///
@@ -49,7 +22,7 @@ class Board {
   final CardCollection discardPile = CardCollection(label: 'Discard Pile');
 
   /// The [Card] face up on the [discardPile].
-  Card get previous => discardPile[discardPile.size - 1];
+  Card get previous => discardPile[discardPile.length - 1];
 
   /// The [Turn]s taken on this board
   late final TurnStack turns;
@@ -58,7 +31,7 @@ class Board {
   GameSettings gameSettings;
 
   /// The current [BoardState]
-  BoardState state = BoardState(false, false, false, 0, 0);
+  BoardState state = BoardState();
 
   /// Starts the game by dealing [Card]s to all [players]' [Player.hand]s.
   ///
@@ -84,15 +57,17 @@ class Board {
     deck.dealAll(drawPile);
     drawPile.shuffle();
     if (gameSettings.aceSkipsPlayers && previous.rank == 1) {
-      state = state.copyWith(isInSkip: true);
+      state = BoardState(isInSkip: true);
     }
     if ((gameSettings.sevenPicksTwo && previous.rank == 7) ||
         (gameSettings.jokerPicksFour && previous.rank == 14)) {
-      state = state.copyWith(
-          isInPick: true, noCardsToBePicked: previous.rank == 7 ? 2 : 4);
+      state = BoardState(
+        isInPick: true,
+        noCardsToBePicked: previous.rank == 7 ? 2 : 4,
+      );
     }
     if (!gameSettings.allowAnyOnBoardJack && previous.rank == 11) {
-      state = state.copyWith(isInCommand: true, commandedSuit: previous.suit);
+      state = BoardState(isInCommand: true, commandedSuit: previous.suit);
     }
     turns = TurnStack(this);
   }
@@ -154,23 +129,27 @@ class Board {
             discardPile.length == 1 &&
             gameSettings.allowAnyOnBoardJack &&
             player.hand.length == gameSettings.initialHandSize - 1)) {
-      if (state.isInCommand) {
-        state = state.copyWith(isInCommand: false, commandedSuit: 0);
-      }
       if (card.rank == 11) {
+        // TODO: Check whether to return game play if player's hand is empty
+        // at this if block or to maintain the current logic of assigning new
+        // board state with card.suit in that case.
+        state = BoardState(
+          isInCommand: true,
+          commandedSuit: player.hand.isEmpty ? card.suit : player.command,
+        );
         turns.add(Turn(Action.commanded, [card], player, state));
-        state = state.copyWith(
-            isInCommand: true,
-            commandedSuit: player.hand.isEmpty ? card.suit : player.command);
       } else {
-        turns.add(Turn(Action.played, [card], player, state));
-        if (gameSettings.aceSkipsPlayers && previous.rank == 1) {
-          state = state.copyWith(isInSkip: true);
-        } else if ((gameSettings.sevenPicksTwo && previous.rank == 7) ||
-            (gameSettings.jokerPicksFour && previous.rank == 14)) {
-          state = state.copyWith(
-              isInPick: true, noCardsToBePicked: previous.rank == 7 ? 2 : 4);
+        if (state.isInCommand) state = BoardState();
+        if (gameSettings.aceSkipsPlayers && card.rank == 1) {
+          state = BoardState(isInSkip: true);
+        } else if ((gameSettings.sevenPicksTwo && card.rank == 7) ||
+            (gameSettings.jokerPicksFour && card.rank == 14)) {
+          state = BoardState(
+            isInPick: true,
+            noCardsToBePicked: card.rank == 7 ? 2 : 4,
+          );
         }
+        turns.add(Turn(Action.played, [card], player, state));
       }
     } else {
       throw UnmatchedCardException(played: card, previous: previous);
@@ -180,7 +159,7 @@ class Board {
   /// Permits [player] to take a [Turn] and ensures game rules are observed.
   enter(Player player) {
     if (state.isInSkip) {
-      state = state.copyWith(isInSkip: false);
+      state = BoardState();
       turns.add(Turn(Action.skipped, [], player, state));
     } else if (state.isInPick) {
       if (drawPile.length < state.noCardsToBePicked) _reshuffle();
@@ -190,32 +169,10 @@ class Board {
         pickedCards.add(drawPile.removeLast());
         noCardsToBePicked--;
       }
-      state = state.copyWith(isInPick: false, noCardsToBePicked: 0);
+      state = BoardState();
       turns.add(Turn(Action.picked, pickedCards, player, state));
     } else {
       player.play(this);
     }
   }
-}
-
-/// Thrown when a [Player] attempts to play a [Card] whose [Card.rank] or
-/// [Card.suit] does not match the [Board.previous] [Card] on the [Board].
-class UnmatchedCardException implements JokerException {
-  final Card played;
-  final Card previous;
-  String get cause => 'Played "$played" does not match previous "$previous".';
-  UnmatchedCardException({required this.played, required this.previous});
-}
-
-/// Thrown when a [Player] attempts to play a [Card] whose [Card.suit] does not
-/// match the [Board.state.commandedSuit] on the [Board].
-class UnmatchedCommandedSuitException implements JokerException {
-  final Card played;
-  final int suit;
-  final bool isJackAllowed;
-  String get cause =>
-      'Played "$played" does not match commanded suit: "${Card.suits[suit]}"' +
-      (isJackAllowed ? ' or is not a Jack.' : '');
-  UnmatchedCommandedSuitException(
-      {required this.played, required this.suit, required this.isJackAllowed});
 }

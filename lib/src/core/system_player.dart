@@ -1,6 +1,6 @@
-import './board.dart';
-import './card.dart';
-import './player.dart';
+import 'board.dart';
+import 'card.dart';
+import 'player.dart';
 
 /// A computerised player
 class SystemPlayer extends Player {

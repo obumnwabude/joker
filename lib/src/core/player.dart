@@ -1,6 +1,6 @@
-import './board.dart';
-import './card.dart';
-import './card_collection.dart';
+import 'board.dart';
+import 'card.dart';
+import 'card_collection.dart';
 
 /// A player of the joker card game.
 abstract class Player {

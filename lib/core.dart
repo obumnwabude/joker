@@ -2,6 +2,7 @@
 library core;
 
 export 'src/core/board.dart';
+export 'src/core/board_exceptions.dart';
 export 'src/core/card.dart';
 export 'src/core/card_collection.dart';
 export 'src/core/game.dart';

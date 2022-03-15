@@ -43,7 +43,7 @@ class ShellPlayer implements Player {
     print('Enter 0 for Draw or the number of card to be played');
     hand.sort();
     print(hand);
-    int option = getUserChoice(limit: hand.size);
+    int option = getUserChoice(limit: hand.length);
 
     if (option == 0) {
       // The following was not the best solution to show the ShellPlayer the

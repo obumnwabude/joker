@@ -1,4 +1,4 @@
-import './board.dart';
+import 'board.dart';
 
 /// The settings used to play on the [Board] at each game.
 class GameSettings {

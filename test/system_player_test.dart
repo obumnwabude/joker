@@ -18,10 +18,10 @@ void main() {
             .forEach((card) => player.hand.removeAt(player.hand.indexOf(card)));
       }
 
-      int oldHandSize = player.hand.size;
+      int oldHandSize = player.hand.length;
       player.play(board);
 
-      expect(player.hand.size, oldHandSize + 1);
+      expect(player.hand.length, oldHandSize + 1);
     });
     test('can play cards matching to board\'s previous', () {
       List<Card> matchingCards = player.hand
@@ -35,10 +35,10 @@ void main() {
         player.hand.add(Card.clone(board.previous));
       }
 
-      int oldHandSize = player.hand.size;
+      int oldHandSize = player.hand.length;
       player.play(board);
 
-      expect(player.hand.size, oldHandSize - 1);
+      expect(player.hand.length, oldHandSize - 1);
     });
   });
 }
